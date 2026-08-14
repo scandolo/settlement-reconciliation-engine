@@ -235,7 +235,10 @@ def fee_error(ctx: LineContext) -> Iterator[Discrepancy]:
     """The fee charged does not match the contracted rate card."""
     if not ctx.comparable or ctx.profile is None:
         return
-    method = ctx.line.payment_method or ctx.transaction.payment_method
+    # The ledger is the merchant's source of truth for how the transaction was
+    # routed. A processor-supplied label must not be able to select a different
+    # rate card or disable the fee check entirely.
+    method = ctx.transaction.payment_method
     expected = ctx.profile.expected_fee(ctx.line.gross, method)
     if expected is None:
         return
@@ -290,16 +293,43 @@ def processor_mismatch(ctx: LineContext) -> Iterator[Discrepancy]:
 
 
 @batch_detector
+def batch_currency(ctx: BatchContext) -> Iterator[Discrepancy]:
+    """Every detail line must use the currency declared by the payout header."""
+    batch = ctx.batch
+    unexpected = sorted({line.currency for line in batch.lines} - {batch.currency})
+    if not unexpected:
+        return
+    yield Discrepancy(
+        type=DiscrepancyType.BATCH_CURRENCY_MISMATCH,
+        severity=Severity.HIGH,
+        processor=batch.processor,
+        batch_id=batch.batch_id,
+        metric="currency",
+        description=(
+            f"Batch {batch.batch_id} declares {batch.currency}, but detail lines also "
+            f"contain {', '.join(unexpected)}."
+        ),
+        expected=batch.currency,
+        actual=", ".join(unexpected),
+        recommended_action=(
+            "Do not post this payout until the processor splits or corrects the "
+            "mixed-currency detail. Header totals are validated only against lines "
+            "in the declared batch currency."
+        ),
+    )
+
+
+@batch_detector
 def batch_totals(ctx: BatchContext) -> Iterator[Discrepancy]:
     """The processor's header totals must equal the sum of its own detail lines."""
     batch = ctx.batch
-    if {ln.currency for ln in batch.lines} - {batch.currency}:
-        return  # mixed-currency payout; per-line currency findings already cover it
-
+    comparable_lines = tuple(
+        line for line in batch.lines if line.currency == batch.currency
+    )
     computed = {
-        "gross": total((ln.gross for ln in batch.lines), batch.currency),
-        "fees": total((ln.fee for ln in batch.lines), batch.currency),
-        "net": total((ln.net for ln in batch.lines), batch.currency),
+        "gross": total((line.gross for line in comparable_lines), batch.currency),
+        "fees": total((line.fee for line in comparable_lines), batch.currency),
+        "net": total((line.net for line in comparable_lines), batch.currency),
     }
     claimed = {
         "gross": batch.reported_gross,
@@ -317,13 +347,17 @@ def batch_totals(ctx: BatchContext) -> Iterator[Discrepancy]:
             severity=severity_for(delta, ctx.rules, Severity.HIGH),
             processor=batch.processor,
             batch_id=batch.batch_id,
+            metric=name,
             description=(
                 f"Batch {batch.batch_id} claims {name} of {stated}, but its "
-                f"{len(batch.lines)} lines sum to {computed[name]}."
+                f"{len(comparable_lines)} comparable lines sum to {computed[name]}."
             ),
             expected=computed[name],
             actual=stated,
-            impact=-delta if name == "net" else None,
+            # Header-versus-detail is a control failure, not an independent
+            # cash event. Line and duplicate findings carry economic impact;
+            # assigning it again here would inflate the headline.
+            impact=None,
             recommended_action=(
                 "Do not post this payout until the processor reissues the file -- "
                 "header and detail disagree, so one of them is wrong."

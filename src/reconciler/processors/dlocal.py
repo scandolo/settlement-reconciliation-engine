@@ -49,7 +49,7 @@ class DLocalAdapter:
     format = "json"
 
     def sniff(self, path: Path) -> bool:
-        return path.suffix.lower() == ".json" and '"settlement"' in read_text(path)[:2000]
+        return '"settlement"' in read_text(path)[:2000]
 
     def parse(self, path: Path) -> SettlementBatch:
         settlement = json.loads(read_text(path))["settlement"]

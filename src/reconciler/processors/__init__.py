@@ -50,7 +50,10 @@ def load_batch(path: Path):
 
 def load_batches(directory: Path) -> list:
     """Parse every settlement file in a directory, oldest settlement first."""
-    files = sorted(p for p in directory.iterdir() if p.suffix.lower() in {".csv", ".json", ".xml"})
+    files = sorted(
+        path for path in directory.iterdir()
+        if path.is_file() and not path.name.startswith(".")
+    )
     batches = [load_batch(path) for path in files]
     return sorted(batches, key=lambda b: (b.settlement_date, b.batch_id))
 

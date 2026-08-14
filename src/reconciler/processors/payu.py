@@ -49,7 +49,7 @@ class PayUAdapter:
     format = "xml"
 
     def sniff(self, path: Path) -> bool:
-        return path.suffix.lower() == ".xml" and "ReconciliationReport" in read_text(path)[:2000]
+        return "ReconciliationReport" in read_text(path)[:2000]
 
     def parse(self, path: Path) -> SettlementBatch:
         root = ElementTree.fromstring(read_text(path))

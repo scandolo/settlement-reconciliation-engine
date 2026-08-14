@@ -20,7 +20,6 @@ from reconciler.rules import DEFAULT_RULES  # noqa: E402
 
 MAX_BODY_BYTES = 4_000_000
 MAX_SETTLEMENT_FILES = 50
-SUPPORTED_SETTLEMENT_SUFFIXES = {".csv", ".json", ".xml"}
 
 
 class UploadError(ValueError):
@@ -40,7 +39,7 @@ def reconcile_payload(payload: dict[str, Any]) -> dict:
         raise UploadError(f"A run supports at most {MAX_SETTLEMENT_FILES} settlement files.")
 
     settlement_files = [
-        _file_entry(entry, SUPPORTED_SETTLEMENT_SUFFIXES, "settlement")
+        _file_entry(entry, None, "settlement")
         for entry in settlement_entries
     ]
     names = [entry["name"] for entry in settlement_files]
@@ -72,7 +71,7 @@ def reconcile_payload(payload: dict[str, Any]) -> dict:
 
 
 def _file_entry(
-    entry: Any, allowed_suffixes: set[str], label: str
+    entry: Any, allowed_suffixes: set[str] | None, label: str
 ) -> dict[str, str]:
     if not isinstance(entry, dict):
         raise UploadError(f"The {label} file is missing.")
@@ -82,7 +81,7 @@ def _file_entry(
         raise UploadError(f"The {label} filename is missing.")
     if name != Path(name).name:
         raise UploadError(f"The {label} filename is invalid.")
-    if Path(name).suffix.lower() not in allowed_suffixes:
+    if allowed_suffixes is not None and Path(name).suffix.lower() not in allowed_suffixes:
         expected = ", ".join(sorted(allowed_suffixes))
         raise UploadError(f"{name}: unsupported format; expected {expected}.")
     if not isinstance(content, str) or not content.strip():

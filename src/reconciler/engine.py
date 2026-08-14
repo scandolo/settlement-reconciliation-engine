@@ -22,7 +22,14 @@ from .detectors import (
     run_ledger_detectors,
     run_line_detectors,
 )
-from .models import Discrepancy, SettlementBatch, SettlementLine, Transaction
+from .models import (
+    Discrepancy,
+    DiscrepancyType,
+    SettlementBatch,
+    SettlementLine,
+    Transaction,
+    TransactionStatus,
+)
 from .money import Money
 from .processors.base import ProcessorProfile
 from .rules import DEFAULT_RULES, ReconciliationRules
@@ -64,8 +71,12 @@ class ReconciliationResult:
     discrepancies: list[Discrepancy] = field(default_factory=list)
     totals_by_currency: dict[str, Totals] = field(default_factory=dict)
     totals_by_processor: dict[str, Totals] = field(default_factory=dict)
+    #: Expected transaction IDs that appeared in at least one settlement line.
     matched_ids: set[str] = field(default_factory=set)
+    #: ID matches with no line, duplicate, or batch-total discrepancy.
+    reconciled_ids: set[str] = field(default_factory=set)
     ledger: dict[str, Transaction] = field(default_factory=dict, repr=False)
+    profiles: dict[str, ProcessorProfile] = field(default_factory=dict, repr=False)
     settlements: dict[str, list[tuple[SettlementBatch, SettlementLine]]] = field(
         default_factory=dict, repr=False
     )
@@ -91,6 +102,12 @@ class ReconciliationResult:
     def match_rate(self) -> Decimal:
         if not self.awaiting_settlement:
             return Decimal("1")
+        return Decimal(len(self.reconciled_ids)) / Decimal(self.awaiting_settlement)
+
+    @property
+    def id_match_rate(self) -> Decimal:
+        if not self.awaiting_settlement:
+            return Decimal("1")
         return Decimal(len(self.matched_ids)) / Decimal(self.awaiting_settlement)
 
     def counts(self, attribute: str) -> dict[str, int]:
@@ -102,12 +119,48 @@ class ReconciliationResult:
     def exposure(self) -> dict[str, Money]:
         """Net money at risk per currency: owed to us, minus overpaid to us."""
         exposure: dict[str, Money] = {}
+        duplicate_ids = {
+            transaction_id
+            for transaction_id, occurrences in self.settlements.items()
+            if len(occurrences) > 1
+        }
+
         for finding in self.discrepancies:
             if finding.impact is None:
                 continue
+            # Duplicate settlements are one economic event. Their line-level
+            # fee and amount findings are still useful for investigation, but
+            # summing those impacts again would inflate the headline.
+            if duplicate_ids.intersection(finding.transaction_ids):
+                continue
             code = finding.impact.currency
             exposure[code] = exposure.get(code, Money.zero(code)) + finding.impact
-        return dict(sorted(exposure.items()))
+
+        for transaction_id in duplicate_ids:
+            transaction = self.ledger.get(transaction_id)
+            occurrences = self.settlements[transaction_id]
+            if transaction is not None and transaction.expects_settlement:
+                profile = self.profiles.get(transaction.processor)
+                expected_fee = (
+                    profile.expected_fee(transaction.amount, transaction.payment_method)
+                    if profile is not None
+                    else None
+                )
+                expected_net = (
+                    transaction.amount - expected_fee
+                    if expected_fee is not None
+                    else transaction.amount
+                )
+                code = expected_net.currency
+                exposure[code] = exposure.get(code, Money.zero(code)) + expected_net
+
+            for _, line in occurrences:
+                code = line.net.currency
+                exposure[code] = exposure.get(code, Money.zero(code)) - line.net
+
+        return dict(
+            sorted((code, amount) for code, amount in exposure.items() if amount.amount)
+        )
 
     def exposure_usd(self) -> Decimal:
         """Indicative single number for the CFO. Ranking only -- never a ledger figure."""
@@ -137,7 +190,7 @@ class ReconciliationEngine:
         profiles: dict[str, ProcessorProfile],
         rules: ReconciliationRules = DEFAULT_RULES,
     ) -> None:
-        self.ledger = {t.transaction_id: t for t in transactions}
+        self.ledger = self._index_ledger(transactions)
         self.profiles = profiles
         self.rules = rules
 
@@ -146,6 +199,7 @@ class ReconciliationEngine:
     ) -> ReconciliationResult:
         result = ReconciliationResult(rules=self.rules)
         result.ledger = dict(self.ledger)
+        result.profiles = dict(self.profiles)
         result.source_batches = tuple(batches)
         result.ledger_size = len(self.ledger)
         result.awaiting_settlement = sum(1 for t in self.ledger.values() if t.expects_settlement)
@@ -156,6 +210,7 @@ class ReconciliationEngine:
         settlements: dict[str, list[tuple[SettlementBatch, SettlementLine]]] = defaultdict(list)
 
         for batch in batches:
+            self._validate_batch(batch)
             result.batches += 1
             profile = self.profiles.get(batch.processor)
             for line in batch.lines:
@@ -191,7 +246,71 @@ class ReconciliationEngine:
                 as_of=result.as_of,
             )
         )
+        discrepant_ids = {
+            transaction_id
+            for finding in result.discrepancies
+            for transaction_id in finding.transaction_ids
+        }
+        invalid_batches = {
+            (finding.processor, finding.batch_id)
+            for finding in result.discrepancies
+            if finding.type in {
+                DiscrepancyType.BATCH_CURRENCY_MISMATCH,
+                DiscrepancyType.BATCH_TOTAL_MISMATCH,
+            }
+        }
+        discrepant_ids.update(
+            line.transaction_id
+            for batch in batches
+            if (batch.processor, batch.batch_id) in invalid_batches
+            for line in batch.lines
+        )
+        result.reconciled_ids = result.matched_ids - discrepant_ids
         return result
+
+    @staticmethod
+    def _index_ledger(transactions: Iterable[Transaction]) -> dict[str, Transaction]:
+        indexed: dict[str, Transaction] = {}
+        for transaction in transactions:
+            transaction_id = transaction.transaction_id
+            if not transaction_id.strip():
+                raise ValueError("ledger transaction ID cannot be empty")
+            if transaction_id in indexed:
+                raise ValueError(f"duplicate transaction ID in ledger: {transaction_id}")
+            if (
+                transaction.status is TransactionStatus.CAPTURED
+                and transaction.captured_at is None
+            ):
+                raise ValueError(
+                    f"captured transaction {transaction_id} requires captured_at"
+                )
+            indexed[transaction_id] = transaction
+        return indexed
+
+    @staticmethod
+    def _validate_batch(batch: SettlementBatch) -> None:
+        for line in batch.lines:
+            currencies = {
+                line.gross.currency,
+                line.fee.currency,
+                line.net.currency,
+            }
+            if len(currencies) != 1:
+                joined = ", ".join(sorted(currencies))
+                raise ValueError(
+                    f"batch {batch.batch_id} line {line.transaction_id} mixes "
+                    f"currencies: {joined}"
+                )
+        for label, reported in (
+            ("reported gross", batch.reported_gross),
+            ("reported fees", batch.reported_fees),
+            ("reported net", batch.reported_net),
+        ):
+            if reported is not None and reported.currency != batch.currency:
+                raise ValueError(
+                    f"batch {batch.batch_id} {label} uses {reported.currency}, "
+                    f"expected {batch.currency}"
+                )
 
     def _accumulate(
         self, result: ReconciliationResult, batch: SettlementBatch, line: SettlementLine

@@ -1,6 +1,6 @@
 # Settlement reconciliation - as of 2026-08-14
 
-_Generated 2026-08-14T14:10:20+00:00_
+_Generated 2026-08-14T14:46:19+00:00_
 
 ## Summary
 
@@ -10,10 +10,12 @@ _Generated 2026-08-14T14:10:20+00:00_
 | Settlement lines | 212 |
 | Ledger transactions | 340 |
 | Expecting settlement | 254 |
-| Matched | 208 |
+| ID matched | 208 |
+| Cleanly reconciled | 166 |
 | Unmatched | 46 |
-| Match rate | 81.89% |
-| Discrepancies | 26 |
+| ID match rate | 81.89% |
+| Clean reconciliation rate | 65.35% |
+| Discrepancies | 30 |
 
 ## Settled volume
 
@@ -37,25 +39,26 @@ Positive means CafeTerra is owed money; negative means CafeTerra was overpaid an
 | Currency | Net exposure |
 | --- | ---: |
 | BRL | R$-1,016.22 BRL |
-| COP | COL$-1,680,537 COP |
-| MXN | MX$5,555.89 MXN |
+| COP | COL$-933,862 COP |
+| MXN | MX$5,748.76 MXN |
 | USD | US$2.04 USD |
-| **Indicative total** | **~US$910.68** |
+| **Indicative total** | **~US$734.44** |
 
 ## Discrepancies by type
 
 | Type | Count |
 | --- | ---: |
 | `settlement_aging` | 8 |
+| `batch_total_mismatch` | 4 |
 | `fee_error` | 3 |
 | `processor_mismatch` | 3 |
 | `missing_settlement` | 3 |
 | `amount_mismatch` | 2 |
 | `unknown_settlement` | 2 |
-| `batch_total_mismatch` | 1 |
 | `net_arithmetic_error` | 1 |
 | `status_conflict` | 1 |
 | `currency_mismatch` | 1 |
+| `batch_currency_mismatch` | 1 |
 | `duplicate_settlement` | 1 |
 
 ## Worklist
@@ -70,26 +73,30 @@ Ordered by severity, then by money at risk.
 | 4 | `CURR-e96b7e1e` | critical | `currency_mismatch` | dLocal | CT-202608-00047 | MX$5,065.47 MXN | CT-202608-00047 was charged in MXN (MX$5,065.47 MXN) but settled in USD (US$5,065.47 USD). |
 | 5 | `UNKN-1216b83c` | critical | `unknown_settlement` | dLocal | CT-ADJ-9001 | COL$-1,040,417 COP | dLocal settled COL$1,040,417 COP for CT-ADJ-9001, which does not exist in the internal ledger. |
 | 6 | `STAT-1717a39b` | critical | `status_conflict` | dLocal | CT-202608-00008 | R$-829.90 BRL | CT-202608-00008 is 'refunded' internally but was settled for R$829.90 BRL. |
-| 7 | `MISS-667d6dc1` | high | `missing_settlement` | dLocal | CT-202608-00096 | R$1,206.73 BRL | CT-202608-00096 was captured on 2026-07-21 for R$1,206.73 BRL and has never been settled. Due 2026-07-26 under the 5-day dLocal SLA -- 19 days overdue. |
-| 8 | `BATC-c5ffaa3f` | high | `batch_total_mismatch` | PayU Latam | - | COL$-746,675 COP | Batch PAYU-COP-20260811 claims net of COL$19,413,541 COP, but its 21 lines sum to COL$18,666,866 COP. |
-| 9 | `MISS-86040d33` | high | `missing_settlement` | dLocal | CT-202608-00270 | MX$1,830.53 MXN | CT-202608-00270 was captured on 2026-07-24 for MX$1,830.53 MXN and has never been settled. Due 2026-07-29 under the 5-day dLocal SLA -- 16 days overdue. |
-| 10 | `NET_-86c9bfe2` | high | `net_arithmetic_error` | Adyen | CT-202608-00226 | R$22.20 BRL | Settlement line does not add up: gross R$319.73 BRL minus fee R$2.52 BRL is R$317.21 BRL, but the report states net R$295.01 BRL. |
-| 11 | `PROC-e94bedd1` | high | `processor_mismatch` | dLocal | CT-202608-00008 | - | dLocal settled CT-202608-00008, but the ledger routed it through Adyen. |
-| 12 | `PROC-3b6e640f` | high | `processor_mismatch` | dLocal | CT-202608-00004 | - | dLocal settled CT-202608-00004, but the ledger routed it through PayU Latam. |
-| 13 | `PROC-a53354ff` | high | `processor_mismatch` | Stripe | CT-202608-00302 | - | Stripe settled CT-202608-00302, but the ledger routed it through Adyen. |
-| 14 | `AMOU-884e40fc` | medium | `amount_mismatch` | Adyen | CT-202608-00264 | R$700.63 BRL | CT-202608-00264 was charged R$1,401.27 BRL but settled with gross R$700.64 BRL -- short by R$700.63 BRL. |
-| 15 | `FEE_-a1cdf1cb` | medium | `fee_error` | dLocal | CT-202608-00243 | COL$106,555 COP | Fee on CT-202608-00243 (credit_card) was COL$173,152 COP, but the contracted rate implies COL$66,597 COP -- overcharged by COL$106,555 COP. |
-| 16 | `FEE_-e7d2de32` | medium | `fee_error` | Stripe | CT-202608-00302 | MX$-192.87 MXN | Fee on CT-202608-00302 (debit_card) was MX$37.24 MXN, but the contracted rate implies MX$230.11 MXN -- undercharged by MX$192.87 MXN. |
-| 17 | `FEE_-9f2f0aa8` | medium | `fee_error` | Adyen | CT-202608-00046 | R$14.38 BRL | Fee on CT-202608-00046 (pix) was R$30.36 BRL, but the contracted rate implies R$15.98 BRL -- overcharged by R$14.38 BRL. |
-| 18 | `AMOU-c8253abf` | medium | `amount_mismatch` | Stripe | CT-202608-00090 | US$2.04 USD | CT-202608-00090 was charged US$11.32 USD but settled with gross US$9.28 USD -- short by US$2.04 USD. |
-| 19 | `SETT-586eb6d6` | low | `settlement_aging` | Adyen | CT-202608-00006 | - | CT-202608-00006 (US$41.42 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
-| 20 | `SETT-5e5d58bb` | low | `settlement_aging` | Adyen | CT-202608-00084 | - | CT-202608-00084 (US$385.92 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
-| 21 | `SETT-07017cd1` | low | `settlement_aging` | dLocal | CT-202608-00097 | - | CT-202608-00097 (COL$997,848 COP) has reached the edge of dLocal's 5-day SLA, due 2026-08-14. |
-| 22 | `SETT-63766b15` | low | `settlement_aging` | Adyen | CT-202608-00109 | - | CT-202608-00109 (US$368.82 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
-| 23 | `SETT-638a8c5d` | low | `settlement_aging` | Adyen | CT-202608-00136 | - | CT-202608-00136 (R$48.44 BRL) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
-| 24 | `SETT-0d7adbad` | low | `settlement_aging` | Adyen | CT-202608-00142 | - | CT-202608-00142 (R$979.74 BRL) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
-| 25 | `SETT-b7fcc7ee` | low | `settlement_aging` | Adyen | CT-202608-00165 | - | CT-202608-00165 (US$96.51 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
-| 26 | `SETT-9ddc112b` | low | `settlement_aging` | Stripe | CT-202608-00333 | - | CT-202608-00333 (US$351.45 USD) has reached the edge of Stripe's 3-day SLA, due 2026-08-14. |
+| 7 | `BATC-70eb3c71` | critical | `batch_total_mismatch` | dLocal | - | - | Batch DLO-MXN-20260813 claims gross of MX$72,944.22 MXN, but its 13 comparable lines sum to MX$67,878.75 MXN. |
+| 8 | `BATC-f2ee0787` | critical | `batch_total_mismatch` | dLocal | - | - | Batch DLO-MXN-20260813 claims net of MX$70,514.97 MXN, but its 13 comparable lines sum to MX$65,580.14 MXN. |
+| 9 | `MISS-667d6dc1` | high | `missing_settlement` | dLocal | CT-202608-00096 | R$1,206.73 BRL | CT-202608-00096 was captured on 2026-07-21 for R$1,206.73 BRL and has never been settled. Due 2026-07-26 under the 5-day dLocal SLA -- 19 days overdue. |
+| 10 | `MISS-86040d33` | high | `missing_settlement` | dLocal | CT-202608-00270 | MX$1,830.53 MXN | CT-202608-00270 was captured on 2026-07-24 for MX$1,830.53 MXN and has never been settled. Due 2026-07-29 under the 5-day dLocal SLA -- 16 days overdue. |
+| 11 | `NET_-86c9bfe2` | high | `net_arithmetic_error` | Adyen | CT-202608-00226 | R$22.20 BRL | Settlement line does not add up: gross R$319.73 BRL minus fee R$2.52 BRL is R$317.21 BRL, but the report states net R$295.01 BRL. |
+| 12 | `BATC-960b2325` | high | `batch_currency_mismatch` | dLocal | - | - | Batch DLO-MXN-20260813 declares MXN, but detail lines also contain USD. |
+| 13 | `BATC-a2a55c53` | high | `batch_total_mismatch` | PayU Latam | - | - | Batch PAYU-COP-20260811 claims net of COL$19,413,541 COP, but its 21 comparable lines sum to COL$18,666,866 COP. |
+| 14 | `BATC-6a9ddc7f` | high | `batch_total_mismatch` | dLocal | - | - | Batch DLO-MXN-20260813 claims fees of MX$2,429.25 MXN, but its 13 comparable lines sum to MX$2,298.61 MXN. |
+| 15 | `PROC-e94bedd1` | high | `processor_mismatch` | dLocal | CT-202608-00008 | - | dLocal settled CT-202608-00008, but the ledger routed it through Adyen. |
+| 16 | `PROC-3b6e640f` | high | `processor_mismatch` | dLocal | CT-202608-00004 | - | dLocal settled CT-202608-00004, but the ledger routed it through PayU Latam. |
+| 17 | `PROC-a53354ff` | high | `processor_mismatch` | Stripe | CT-202608-00302 | - | Stripe settled CT-202608-00302, but the ledger routed it through Adyen. |
+| 18 | `AMOU-884e40fc` | medium | `amount_mismatch` | Adyen | CT-202608-00264 | R$700.63 BRL | CT-202608-00264 was charged R$1,401.27 BRL but settled with gross R$700.64 BRL -- short by R$700.63 BRL. |
+| 19 | `FEE_-a1cdf1cb` | medium | `fee_error` | dLocal | CT-202608-00243 | COL$106,555 COP | Fee on CT-202608-00243 (credit_card) was COL$173,152 COP, but the contracted rate implies COL$66,597 COP -- overcharged by COL$106,555 COP. |
+| 20 | `FEE_-e7d2de32` | medium | `fee_error` | Stripe | CT-202608-00302 | MX$-192.87 MXN | Fee on CT-202608-00302 (debit_card) was MX$37.24 MXN, but the contracted rate implies MX$230.11 MXN -- undercharged by MX$192.87 MXN. |
+| 21 | `FEE_-9f2f0aa8` | medium | `fee_error` | Adyen | CT-202608-00046 | R$14.38 BRL | Fee on CT-202608-00046 (pix) was R$30.36 BRL, but the contracted rate implies R$15.98 BRL -- overcharged by R$14.38 BRL. |
+| 22 | `AMOU-c8253abf` | medium | `amount_mismatch` | Stripe | CT-202608-00090 | US$2.04 USD | CT-202608-00090 was charged US$11.32 USD but settled with gross US$9.28 USD -- short by US$2.04 USD. |
+| 23 | `SETT-586eb6d6` | low | `settlement_aging` | Adyen | CT-202608-00006 | - | CT-202608-00006 (US$41.42 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
+| 24 | `SETT-5e5d58bb` | low | `settlement_aging` | Adyen | CT-202608-00084 | - | CT-202608-00084 (US$385.92 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
+| 25 | `SETT-07017cd1` | low | `settlement_aging` | dLocal | CT-202608-00097 | - | CT-202608-00097 (COL$997,848 COP) has reached the edge of dLocal's 5-day SLA, due 2026-08-14. |
+| 26 | `SETT-63766b15` | low | `settlement_aging` | Adyen | CT-202608-00109 | - | CT-202608-00109 (US$368.82 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
+| 27 | `SETT-638a8c5d` | low | `settlement_aging` | Adyen | CT-202608-00136 | - | CT-202608-00136 (R$48.44 BRL) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
+| 28 | `SETT-0d7adbad` | low | `settlement_aging` | Adyen | CT-202608-00142 | - | CT-202608-00142 (R$979.74 BRL) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
+| 29 | `SETT-b7fcc7ee` | low | `settlement_aging` | Adyen | CT-202608-00165 | - | CT-202608-00165 (US$96.51 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14. |
+| 30 | `SETT-9ddc112b` | low | `settlement_aging` | Stripe | CT-202608-00333 | - | CT-202608-00333 (US$351.45 USD) has reached the edge of Stripe's 3-day SLA, due 2026-08-14. |
 
 ## Recommended actions
 
@@ -99,10 +106,14 @@ Ordered by severity, then by money at risk.
 - **`CURR-e96b7e1e`** (critical) - Escalate today. The deposit will not clear against a MXN receivable; request reversal and re-settlement in the original currency.
 - **`UNKN-1216b83c`** (critical) - Do not recognise as revenue yet. Confirm whether this is a reserve release, refund reversal or adjustment, and book it accordingly.
 - **`STAT-1717a39b`** (critical) - Quarantine the funds. Settled reversals are normally clawed back, so recognising this now creates a shortfall in a later payout.
+- **`BATC-70eb3c71`** (critical) - Do not post this payout until the processor reissues the file -- header and detail disagree, so one of them is wrong.
+- **`BATC-f2ee0787`** (critical) - Do not post this payout until the processor reissues the file -- header and detail disagree, so one of them is wrong.
 - **`MISS-667d6dc1`** (high) - Raise a missing-settlement enquiry with dLocal quoting the capture date. If it was refunded processor-side, correct the internal status instead.
-- **`BATC-c5ffaa3f`** (high) - Do not post this payout until the processor reissues the file -- header and detail disagree, so one of them is wrong.
 - **`MISS-86040d33`** (high) - Raise a missing-settlement enquiry with dLocal quoting the capture date. If it was refunded processor-side, correct the internal status instead.
 - **`NET_-86c9bfe2`** (high) - Hold the line and request a corrected settlement advice -- the file is internally inconsistent, so neither figure can be trusted.
+- **`BATC-960b2325`** (high) - Do not post this payout until the processor splits or corrects the mixed-currency detail. Header totals are validated only against lines in the declared batch currency.
+- **`BATC-a2a55c53`** (high) - Do not post this payout until the processor reissues the file -- header and detail disagree, so one of them is wrong.
+- **`BATC-6a9ddc7f`** (high) - Do not post this payout until the processor reissues the file -- header and detail disagree, so one of them is wrong.
 - **`PROC-e94bedd1`** (high) - Check for a routing failover or a mis-keyed merchant reference before accepting the payout, and confirm the other processor is not also settling it.
 - **`PROC-3b6e640f`** (high) - Check for a routing failover or a mis-keyed merchant reference before accepting the payout, and confirm the other processor is not also settling it.
 - **`PROC-a53354ff`** (high) - Check for a routing failover or a mis-keyed merchant reference before accepting the payout, and confirm the other processor is not also settling it.

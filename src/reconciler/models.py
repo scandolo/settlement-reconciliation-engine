@@ -35,6 +35,7 @@ class DiscrepancyType(str, Enum):
     FEE_ERROR = "fee_error"
     CURRENCY_MISMATCH = "currency_mismatch"
     STATUS_CONFLICT = "status_conflict"
+    BATCH_CURRENCY_MISMATCH = "batch_currency_mismatch"
     BATCH_TOTAL_MISMATCH = "batch_total_mismatch"
     SETTLEMENT_AGING = "settlement_aging"
     PROCESSOR_MISMATCH = "processor_mismatch"
@@ -119,6 +120,7 @@ class Discrepancy:
     recommended_action: str
     transaction_ids: list[str] = field(default_factory=list)
     batch_id: str | None = None
+    metric: str | None = None
     expected: Any = None
     actual: Any = None
     #: Signed money impact. Positive = we are owed money. Negative = we were
@@ -132,7 +134,11 @@ class Discrepancy:
         This is what lets finance track "is this the same break as last month?"
         and lets the tool be run on a schedule without re-alerting on known items.
         """
-        seed = f"{self.type.value}|{self.processor}|{self.batch_id}|{','.join(sorted(self.transaction_ids))}"
+        parts = [self.type.value, self.processor, str(self.batch_id)]
+        if self.metric is not None:
+            parts.append(self.metric)
+        parts.append(",".join(sorted(self.transaction_ids)))
+        seed = "|".join(parts)
         return f"{self.type.value[:4].upper()}-{hashlib.sha1(seed.encode()).hexdigest()[:8]}"
 
     def to_json(self) -> dict:
@@ -142,6 +148,7 @@ class Discrepancy:
             "severity": self.severity.value,
             "processor": self.processor,
             "batch_id": self.batch_id,
+            "metric": self.metric,
             "transaction_ids": self.transaction_ids,
             "description": self.description,
             "expected": _jsonable(self.expected),

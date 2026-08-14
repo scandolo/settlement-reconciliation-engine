@@ -657,7 +657,7 @@
       <div class="upload-target" data-drop="settlement">
         <span class="file-glyph" aria-hidden="true"></span>
         <span class="upload-copy"><span class="upload-label">Selected reports</span><span class="upload-name" id="settlement-name">Loading sample...</span><span class="upload-meta" id="settlement-meta">CSV, JSON or XML</span></span>
-        <input class="sr-only" id="settlement-input" type="file" accept=".csv,.json,.xml,text/csv,application/json,text/xml,application/xml" multiple aria-label="Upload settlement reports">
+        <input class="sr-only" id="settlement-input" type="file" multiple aria-label="Upload settlement reports">
       </div>
       <details class="file-list-disclosure"><summary id="show-files">Show settlement files</summary><ul class="mini-file-list" id="mini-file-list"></ul></details>
       <div class="date-field">
@@ -743,7 +743,7 @@
     <section class="tabs" aria-label="Reconciliation detail">
       <div class="tab-list" role="tablist" aria-label="Result views">
         <button class="tab-button" type="button" role="tab" aria-selected="true" aria-controls="panel-exceptions" id="tab-exceptions" data-tab="exceptions">Exceptions <span class="tab-count" id="exception-tab-count"></span></button>
-        <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-matched" id="tab-matched" data-tab="matched">Matched <span class="tab-count" id="matched-tab-count"></span></button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-matched" id="tab-matched" data-tab="matched">ID matches <span class="tab-count" id="matched-tab-count"></span></button>
         <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-batches" id="tab-batches" data-tab="batches">Batches <span class="tab-count" id="batch-tab-count"></span></button>
       </div>
 
@@ -761,12 +761,12 @@
 
       <div class="tab-panel" id="panel-matched" role="tabpanel" aria-labelledby="tab-matched" hidden>
         <div class="toolbar">
-          <label><span class="sr-only">Search matched transactions</span><input id="matched-search" type="search" placeholder="Search transaction, processor or batch"></label>
+          <label><span class="sr-only">Search ID-matched transactions</span><input id="matched-search" type="search" placeholder="Search transaction, processor or batch"></label>
           <span class="small" id="matched-visible-count"></span>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Transaction</th><th>Processor</th><th>Batch</th><th>Currency</th><th class="num">Internal</th><th class="num">Gross</th><th class="num">Fees</th><th class="num">Net</th><th>Date</th></tr></thead>
+            <thead><tr><th>Transaction</th><th>Processor</th><th>Batch</th><th>Status</th><th>Currency</th><th class="num">Internal</th><th class="num">Gross</th><th class="num">Fees</th><th class="num">Net</th><th>Date</th></tr></thead>
             <tbody id="matched-rows"></tbody>
           </table>
         </div>
@@ -1068,11 +1068,13 @@ function runLabel() {
 
 function renderResults() {
   const summary = report.summary;
+  const reconciled = summary.cleanly_reconciled ?? summary.matched;
+  const idMatched = summary.id_matched ?? report.matched_transactions.length;
   const critical = report.by_severity.critical || 0;
   $("results-lede").textContent = `${summary.discrepancies} discrepancies across ${Object.keys(report.settled_totals).length} currencies. Start with ${critical} critical exceptions.`;
   $("metric-strip").innerHTML = [
-    [summary.matched, "Reconciled"], [summary.unmatched, "Unmatched"],
-    [summary.discrepancies, "Discrepancies"], [summary.batches_processed, "Batches"]
+    [reconciled, "Reconciled"], [idMatched, "ID matched"],
+    [summary.unmatched, "Unmatched"], [summary.discrepancies, "Discrepancies"]
   ].map(([value, label]) => `<div class="metric"><span class="metric-value">${escapeHtml(value)}</span><span class="metric-label">${escapeHtml(label)}</span></div>`).join("");
 
   $("currency-rows").innerHTML = Object.entries(report.settled_totals).map(([currency, totals]) => {
@@ -1084,7 +1086,7 @@ function renderResults() {
   $("currency-total-row").innerHTML = `<tr><td>Estimated USD total</td><td class="num">${formatUsdEstimate(estimate.gross)}</td><td class="num">${formatUsdEstimate(estimate.fees)}</td><td class="num">${formatUsdEstimate(estimate.net)}</td><td class="num">${formatUsdEstimate(report.summary.indicative_exposure_usd)}</td></tr>`;
 
   $("exception-tab-count").textContent = summary.discrepancies;
-  $("matched-tab-count").textContent = summary.matched;
+  $("matched-tab-count").textContent = idMatched;
   $("batch-tab-count").textContent = summary.batches_processed;
   renderSeverityFilters();
   renderTypeBreakdown();
@@ -1144,7 +1146,7 @@ function renderMatched() {
   const visible = rows.slice(0, matchedLimit);
   $("matched-visible-count").textContent = `Showing ${visible.length} of ${rows.length}`;
   $("matched-rows").innerHTML = visible.map(row => `<tr title="${escapeHtml(`${row.source_file} · ${row.source_locator}`)}">
-    <td class="mono">${escapeHtml(row.transaction_id)}</td><td>${escapeHtml(row.processor)}</td><td class="mono">${escapeHtml(row.batch_id)}</td><td>${escapeHtml(row.currency)}</td>
+    <td class="mono">${escapeHtml(row.transaction_id)}</td><td>${escapeHtml(row.processor)}</td><td class="mono">${escapeHtml(row.batch_id)}</td><td><span class="status ${escapeHtml(row.status)}">${row.status === "review" ? "Review" : "Clean"}</span></td><td>${escapeHtml(row.currency)}</td>
     <td class="num">${escapeHtml(row.internal_amount)}</td><td class="num">${escapeHtml(row.gross)}</td><td class="num">${escapeHtml(row.fees)}</td><td class="num">${escapeHtml(row.net)}</td><td>${escapeHtml(row.settlement_date)}</td>
   </tr>`).join("");
   $("load-more-matched").hidden = visible.length >= rows.length;

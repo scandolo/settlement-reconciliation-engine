@@ -21,7 +21,13 @@ import json
 from datetime import datetime, timezone
 
 from .engine import ReconciliationResult
-from .models import Discrepancy, SettlementBatch, SettlementLine, Severity
+from .models import (
+    Discrepancy,
+    DiscrepancyType,
+    SettlementBatch,
+    SettlementLine,
+    Severity,
+)
 from .money import total
 
 SEVERITY_ICON = {
@@ -47,8 +53,12 @@ def to_dict(result: ReconciliationResult) -> dict:
             "settlement_lines": result.lines,
             "ledger_transactions": result.ledger_size,
             "awaiting_settlement": result.awaiting_settlement,
-            "matched": len(result.matched_ids),
+            "id_matched": len(result.matched_ids),
+            "cleanly_reconciled": len(result.reconciled_ids),
+            # Kept as a compatibility alias for existing dashboard consumers.
+            "matched": len(result.reconciled_ids),
             "unmatched": result.unmatched_count,
+            "id_match_rate": f"{result.id_match_rate:.2%}",
             "match_rate": f"{result.match_rate:.2%}",
             "discrepancies": len(result.discrepancies),
             "indicative_exposure_usd": str(result.exposure_usd()),
@@ -112,8 +122,18 @@ def _matched_to_json(result: ReconciliationResult, transaction_id: str) -> dict:
     batch, line = result.settlements[transaction_id][0]
     source = _line_source(batch, line)
     finding_ids = [
-        finding.id for finding in result.discrepancies
+        finding.id
+        for finding in result.discrepancies
         if transaction_id in finding.transaction_ids
+        or (
+            finding.processor == batch.processor
+            and finding.batch_id == batch.batch_id
+            and finding.type
+            in {
+                DiscrepancyType.BATCH_CURRENCY_MISMATCH,
+                DiscrepancyType.BATCH_TOTAL_MISMATCH,
+            }
+        )
     ]
     return {
         "transaction_id": transaction_id,
@@ -137,7 +157,9 @@ def _matched_to_json(result: ReconciliationResult, transaction_id: str) -> dict:
 def _batch_to_json(result: ReconciliationResult, batch: SettlementBatch) -> dict:
     currencies = sorted({line.currency for line in batch.lines})
     finding_ids = [
-        finding.id for finding in result.discrepancies if finding.batch_id == batch.batch_id
+        finding.id
+        for finding in result.discrepancies
+        if finding.batch_id == batch.batch_id and finding.processor == batch.processor
     ]
     return {
         "batch_id": batch.batch_id,
@@ -171,6 +193,7 @@ def _finding_source(result: ReconciliationResult, finding: Discrepancy) -> dict:
             (
                 candidate for candidate in result.source_batches
                 if candidate.batch_id == finding.batch_id
+                and candidate.processor == finding.processor
             ),
             None,
         )
@@ -274,7 +297,8 @@ def to_console(result: ReconciliationResult, limit: int = 15) -> str:
     add(f"  Batches processed      {result.batches}")
     add(f"  Settlement lines       {result.lines}")
     add(f"  Ledger transactions    {result.ledger_size} ({result.awaiting_settlement} expecting settlement)")
-    add(f"  Matched                {len(result.matched_ids)}  ({result.match_rate:.1%})")
+    add(f"  ID matched             {len(result.matched_ids)}  ({result.id_match_rate:.1%})")
+    add(f"  Cleanly reconciled     {len(result.reconciled_ids)}  ({result.match_rate:.1%})")
     add(f"  Unmatched              {result.unmatched_count}")
     add(f"  Discrepancies          {len(result.discrepancies)}")
     add("")
@@ -337,9 +361,11 @@ def to_markdown(result: ReconciliationResult) -> str:
         ("Settlement lines", "settlement_lines"),
         ("Ledger transactions", "ledger_transactions"),
         ("Expecting settlement", "awaiting_settlement"),
-        ("Matched", "matched"),
+        ("ID matched", "id_matched"),
+        ("Cleanly reconciled", "cleanly_reconciled"),
         ("Unmatched", "unmatched"),
-        ("Match rate", "match_rate"),
+        ("ID match rate", "id_match_rate"),
+        ("Clean reconciliation rate", "match_rate"),
         ("Discrepancies", "discrepancies"),
     ]:
         add(f"| {label} | {data['summary'][key]} |")

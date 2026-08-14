@@ -52,7 +52,7 @@ class AdyenAdapter:
     format = "csv"
 
     def sniff(self, path: Path) -> bool:
-        return path.suffix.lower() == ".csv" and "Psp Reference" in read_text(path)[:2000]
+        return "Psp Reference" in read_text(path)[:2000]
 
     def parse(self, path: Path) -> SettlementBatch:
         rows = list(csv.DictReader(read_text(path).splitlines()))

@@ -309,6 +309,13 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(len(report["files"]), result.batches)
         self.assertEqual(len(report["batches"]), result.batches)
         self.assertEqual(len(report["matched_transactions"]), len(result.matched_ids))
+        self.assertEqual(
+            sum(
+                row["status"] == "matched"
+                for row in report["matched_transactions"]
+            ),
+            len(result.reconciled_ids),
+        )
         self.assertEqual(set(report["indicative_totals_usd"]), {"gross", "fees", "net"})
         self.assertTrue(
             {
@@ -334,7 +341,14 @@ class EndToEndTests(unittest.TestCase):
                 "content": (root / "transactions.csv").read_text(encoding="utf-8"),
             },
             "settlements": [
-                {"name": path.name, "content": path.read_text(encoding="utf-8")}
+                {
+                    "name": (
+                        f"{path.stem}.dat"
+                        if path.name == "DLO-BRL-20260813.json"
+                        else path.name
+                    ),
+                    "content": path.read_text(encoding="utf-8"),
+                }
                 for path in sorted((root / "settlements").iterdir())
             ],
         }
@@ -343,7 +357,9 @@ class EndToEndTests(unittest.TestCase):
 
         self.assertEqual(report["summary"]["ledger_transactions"], 340)
         self.assertEqual(report["summary"]["batches_processed"], 9)
-        self.assertEqual(report["summary"]["discrepancies"], 26)
+        self.assertEqual(report["summary"]["discrepancies"], 30)
+        self.assertEqual(report["summary"]["id_matched"], 208)
+        self.assertEqual(report["summary"]["cleanly_reconciled"], 166)
 
 
 if __name__ == "__main__":

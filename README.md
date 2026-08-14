@@ -27,7 +27,7 @@ result against known ground truth. It takes about a second and needs nothing
 installed.
 
 ```bash
-make test          # 29 tests, standard library unittest
+make test          # 38 tests, standard library unittest
 make processors    # registered processors, currencies, rate cards, detectors
 make report        # write the Markdown report to out/
 ```
@@ -57,20 +57,22 @@ From 340 ledger transactions and 9 settlement files across 4 processors:
   Batches processed      9
   Settlement lines       212
   Ledger transactions    340 (254 expecting settlement)
-  Matched                208  (81.9%)
+  ID matched             208  (81.9%)
+  Cleanly reconciled     166  (65.4%)
   Unmatched              46
-  Discrepancies          26
+  Discrepancies          30
 
   MONEY AT RISK   (positive = owed to us, negative = overpaid to us)
     BRL   R$-1,016.22 BRL
-    COP   COL$-1,680,537 COP
-    MXN   MX$5,555.89 MXN
+    COP   COL$-933,862 COP
+    MXN   MX$5,748.76 MXN
     USD   US$2.04 USD
-    indicative total  ~US$910.68
+    indicative total  ~US$734.44
 
-  BY TYPE  settlement_aging=8  fee_error=3  processor_mismatch=3  missing_settlement=3
-           amount_mismatch=2  unknown_settlement=2  batch_total_mismatch=1
-           net_arithmetic_error=1  status_conflict=1  currency_mismatch=1
+  BY TYPE  settlement_aging=8  batch_total_mismatch=4  fee_error=3
+           processor_mismatch=3  missing_settlement=3  amount_mismatch=2
+           unknown_settlement=2  net_arithmetic_error=1  status_conflict=1
+           currency_mismatch=1  batch_currency_mismatch=1
            duplicate_settlement=1
 ```
 
@@ -90,7 +92,7 @@ who wants one number. Three consequences run through the whole design:
 
 1. **It is an exception tool, not a ledger dump.** Most of the 212 settlement
    lines require no action; nobody needs to inspect those one by one. The
-   output is the 26 actionable findings, ordered by money at risk rather than
+   output is the 30 actionable findings, ordered by money at risk rather than
    by file order, so the worst thing is the first thing.
 2. **Every finding carries its next action.** Not an error code - the sentence
    the analyst would otherwise have to compose: which processor to contact,
@@ -161,6 +163,23 @@ currency, and exposure is reported per currency. There is exactly one place a
 rate appears - ranking severity across currencies, so a large Colombian break
 and a large US one sort sensibly in one worklist - and it is labelled
 indicative everywhere it surfaces.
+
+**An ID match is not automatically a reconciliation.** The report keeps the
+208 expected IDs that appeared in processor files separate from the 166 that
+have no line, duplicate, or batch-control exception. This prevents a wrong
+amount from being counted as successfully reconciled merely because its ID was
+present.
+
+**Economic exposure is counted once per root event.** Duplicate settlements
+are valued from the expected net receipt against all actual receipts. Their
+line-level fee and amount findings remain visible for investigation but are
+not summed again. Batch header breaks are control failures and carry no
+independent cash impact until the processor confirms which figure is real.
+
+**Input boundaries fail loudly.** Duplicate ledger IDs, captured rows without
+capture dates, internally mixed line currencies, and multi-payout Stripe files
+are rejected instead of being collapsed or ignored. Settlement adapters sniff
+content, so a valid export does not stop working because its filename changes.
 
 **Configuration over code.** Currencies are a registry. Processors are a
 registry. Rate cards, SLAs and tolerances are data on a `ProcessorProfile`.
@@ -278,7 +297,7 @@ All four in the brief are implemented:
   allowance and a materiality threshold. `--strict` switches to a zero-tolerance
   audit profile.
 - **Interactive workflow** - the deployed page walks through file selection,
-  preflight, reconciliation, exceptions, matched transactions, and batches.
+  preflight, reconciliation, exceptions, ID-matched transactions, and batches.
   Every exception expands to its expected/actual values, recommended action,
   and exact source row or JSON/XML path. CSV, Markdown, and JSON exports are
   generated in the browser from the same report payload.
@@ -292,10 +311,10 @@ and the ground-truth verification harness.
 ## Testing
 
 ```bash
-make test     # 29 tests
+make test     # 38 tests
 ```
 
-Three layers, matching the three things that can be wrong:
+Four layers, matching the four things that can be wrong:
 
 - **Money** - quantisation per currency, refusal to mix currencies, and parsing
   of the localized formats represented in the fixtures (`R$ 1.234,56`, `1,234.56`, `(45.10)`,
@@ -305,6 +324,10 @@ Three layers, matching the three things that can be wrong:
   adapter, so all four formats are asserted to round-trip byte-for-value.
 - **Detectors** - each rule is tested firing when it should *and* staying quiet
   when it should not (a fee one centavo off the rate card is not a finding).
+- **Trust boundaries** - adversarial cases cover duplicate and incomplete
+  ledgers, fee-label manipulation, multi-payout files, filename changes,
+  mixed-currency batches, stable IDs, reconciliation counts, and exposure
+  deduplication.
 
 Plus end-to-end: determinism, 100% ground-truth recall, no silent currency
 conversion in exposure, and all four renderers producing output.
@@ -321,7 +344,7 @@ files and rules, no implicit currency conversion, and an exception worklist for
 finance rather than a generic engineering dashboard.
 
 Generated code was not treated as evidence that the engine worked. I verified
-it with 29 unit and integration tests, deterministic ground truth that measures
+it with 38 unit and integration tests, deterministic ground truth that measures
 15/15 injected defects, a fresh-clone run of the documented command, and checks
 against the deployed report. I also changed the initial approach after review:
 fictional processors became public-doc-informed adapters, three currencies

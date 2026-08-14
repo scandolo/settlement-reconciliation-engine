@@ -46,10 +46,7 @@ class StripeAdapter:
     format = "csv"
 
     def sniff(self, path: Path) -> bool:
-        return (
-            path.suffix.lower() == ".csv"
-            and "balance_transaction_id" in read_text(path)[:2000]
-        )
+        return "balance_transaction_id" in read_text(path)[:2000]
 
     def parse(self, path: Path) -> SettlementBatch:
         rows = list(csv.DictReader(read_text(path).splitlines()))
@@ -57,15 +54,39 @@ class StripeAdapter:
         if not charges:
             raise ValueError(f"{path.name}: no charge rows to settle")
 
-        currency = charges[0]["currency"].strip().upper()
+        payout_ids = {
+            row["automatic_payout_id"].strip()
+            for row in rows
+            if row["automatic_payout_id"].strip()
+        }
+        if len(payout_ids) != 1:
+            raise ValueError(
+                f"{path.name}: expected one payout, found multiple payouts: "
+                f"{', '.join(sorted(payout_ids)) or 'none'}"
+            )
+        payout_id = next(iter(payout_ids))
+
+        currencies = {row["currency"].strip().upper() for row in charges}
+        if len(currencies) != 1:
+            raise ValueError(f"{path.name}: payout {payout_id} mixes currencies")
+        currency = next(iter(currencies))
+
+        effective_dates = {
+            row["automatic_payout_effective_at_utc"].strip()
+            for row in charges
+            if row["automatic_payout_effective_at_utc"].strip()
+        }
+        if len(effective_dates) != 1:
+            raise ValueError(
+                f"{path.name}: payout {payout_id} has inconsistent effective dates"
+            )
         lines = tuple(self._line(row) for row in charges)
-        payout_id = charges[0]["automatic_payout_id"].strip()
 
         return SettlementBatch(
             batch_id=payout_id,
             processor=self.profile.name,
             settlement_date=datetime.fromisoformat(
-                charges[0]["automatic_payout_effective_at_utc"].replace("Z", "+00:00")
+                next(iter(effective_dates)).replace("Z", "+00:00")
             ).date(),
             currency=currency,
             lines=lines,
@@ -73,7 +94,7 @@ class StripeAdapter:
             reported_fees=total((ln.fee for ln in lines), currency),
             # Stripe's payout row states the deposit actually sent, which is the
             # number worth validating the detail against.
-            reported_net=_payout_net(rows, currency),
+            reported_net=_payout_net(rows, currency, payout_id),
             source_file=path.name,
             source_format="csv",
         )
@@ -89,10 +110,19 @@ class StripeAdapter:
         )
 
 
-def _payout_net(rows: list[dict[str, str]], currency: str) -> Money | None:
-    payouts = [r for r in rows if r["reporting_category"].strip() == "payout"]
+def _payout_net(
+    rows: list[dict[str, str]], currency: str, payout_id: str
+) -> Money | None:
+    payouts = [
+        row
+        for row in rows
+        if row["reporting_category"].strip() == "payout"
+        and row["automatic_payout_id"].strip() == payout_id
+    ]
     if not payouts:
         return None
+    if {row["currency"].strip().upper() for row in payouts} != {currency}:
+        raise ValueError(f"payout {payout_id} header uses the wrong currency")
     # Stripe books the payout as a negative balance movement; flip the sign so
     # it reads as "amount deposited".
     return total(

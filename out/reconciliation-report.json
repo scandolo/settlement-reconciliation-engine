@@ -1,16 +1,19 @@
 {
-  "generated_at": "2026-08-14T14:10:20+00:00",
+  "generated_at": "2026-08-14T14:46:19+00:00",
   "as_of": "2026-08-14",
   "summary": {
     "batches_processed": 9,
     "settlement_lines": 212,
     "ledger_transactions": 340,
     "awaiting_settlement": 254,
-    "matched": 208,
+    "id_matched": 208,
+    "cleanly_reconciled": 166,
+    "matched": 166,
     "unmatched": 46,
-    "match_rate": "81.89%",
-    "discrepancies": 26,
-    "indicative_exposure_usd": "910.68"
+    "id_match_rate": "81.89%",
+    "match_rate": "65.35%",
+    "discrepancies": 30,
+    "indicative_exposure_usd": "734.44"
   },
   "settled_totals": {
     "BRL": {
@@ -121,27 +124,28 @@
   },
   "exposure_by_currency": {
     "BRL": "R$-1,016.22 BRL",
-    "COP": "COL$-1,680,537 COP",
-    "MXN": "MX$5,555.89 MXN",
+    "COP": "COL$-933,862 COP",
+    "MXN": "MX$5,748.76 MXN",
     "USD": "US$2.04 USD"
   },
   "by_severity": {
+    "high": 9,
+    "critical": 8,
     "low": 8,
-    "high": 7,
-    "critical": 6,
     "medium": 5
   },
   "by_type": {
     "settlement_aging": 8,
+    "batch_total_mismatch": 4,
     "fee_error": 3,
     "processor_mismatch": 3,
     "missing_settlement": 3,
     "amount_mismatch": 2,
     "unknown_settlement": 2,
-    "batch_total_mismatch": 1,
     "net_arithmetic_error": 1,
     "status_conflict": 1,
     "currency_mismatch": 1,
+    "batch_currency_mismatch": 1,
     "duplicate_settlement": 1
   },
   "ledger_file": {
@@ -296,7 +300,7 @@
       "source_format": "xml",
       "status": "review",
       "finding_ids": [
-        "BATC-c5ffaa3f"
+        "BATC-a2a55c53"
       ]
     },
     {
@@ -433,7 +437,11 @@
       "source_format": "json",
       "status": "review",
       "finding_ids": [
-        "CURR-e96b7e1e"
+        "CURR-e96b7e1e",
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
       ]
     },
     {
@@ -514,8 +522,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[6]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00003",
@@ -584,8 +597,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[0]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00012",
@@ -737,8 +755,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[17]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00031",
@@ -754,8 +774,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[1]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00032",
@@ -873,8 +898,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[13]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00042",
@@ -907,8 +934,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[9]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00045",
@@ -962,7 +991,11 @@
       "settlement_count": 1,
       "status": "review",
       "finding_ids": [
-        "CURR-e96b7e1e"
+        "CURR-e96b7e1e",
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
       ]
     },
     {
@@ -1013,8 +1046,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[11]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00053",
@@ -1149,8 +1184,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[7]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00068",
@@ -1285,8 +1325,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[2]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00080",
@@ -1370,8 +1412,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[15]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00088",
@@ -1440,8 +1484,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[18]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00095",
@@ -1508,8 +1554,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[2]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00102",
@@ -1559,8 +1610,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[8]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00107",
@@ -1661,8 +1717,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[4]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00117",
@@ -1678,8 +1736,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[14]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00118",
@@ -1695,8 +1755,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[4]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00119",
@@ -1950,8 +2015,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[3]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00149",
@@ -2001,8 +2068,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[7]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00152",
@@ -2324,8 +2393,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[9]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00179",
@@ -2426,8 +2500,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[16]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00188",
@@ -2562,8 +2638,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[12]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00203",
@@ -2630,8 +2708,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[13]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00209",
@@ -2647,8 +2730,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[10]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00210",
@@ -2749,8 +2834,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[11]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00219",
@@ -2887,8 +2977,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[1]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00229",
@@ -2921,8 +3013,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[19]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00235",
@@ -3076,8 +3170,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[12]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00249",
@@ -3178,8 +3277,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[21]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00257",
@@ -3469,8 +3570,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[5]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00283",
@@ -3503,8 +3606,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[3]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00285",
@@ -3537,8 +3645,13 @@
       "source_format": "json",
       "source_locator": "$.settlement.payments[10]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-960b2325",
+        "BATC-70eb3c71",
+        "BATC-6a9ddc7f",
+        "BATC-f2ee0787"
+      ]
     },
     {
       "transaction_id": "CT-202608-00294",
@@ -3796,8 +3909,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[20]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00314",
@@ -3813,8 +3928,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[6]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00316",
@@ -3949,8 +4066,10 @@
       "source_format": "xml",
       "source_locator": "/ReconciliationReport/Transactions/Transaction[8]",
       "settlement_count": 1,
-      "status": "matched",
-      "finding_ids": []
+      "status": "review",
+      "finding_ids": [
+        "BATC-a2a55c53"
+      ]
     },
     {
       "transaction_id": "CT-202608-00334",
@@ -4045,6 +4164,7 @@
       "severity": "critical",
       "processor": "Adyen",
       "batch_id": "ADY-MXN-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00302"
       ],
@@ -4067,6 +4187,7 @@
       "severity": "critical",
       "processor": "Adyen",
       "batch_id": "ADY-BRL-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-RSV-9002"
       ],
@@ -4089,6 +4210,7 @@
       "severity": "critical",
       "processor": "dLocal",
       "batch_id": null,
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00216"
       ],
@@ -4111,6 +4233,7 @@
       "severity": "critical",
       "processor": "dLocal",
       "batch_id": "DLO-MXN-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00047"
       ],
@@ -4133,6 +4256,7 @@
       "severity": "critical",
       "processor": "dLocal",
       "batch_id": "DLO-COP-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-ADJ-9001"
       ],
@@ -4155,6 +4279,7 @@
       "severity": "critical",
       "processor": "dLocal",
       "batch_id": "DLO-BRL-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00008"
       ],
@@ -4172,11 +4297,48 @@
       "source_locator": "$.settlement.payments[37]"
     },
     {
+      "id": "BATC-70eb3c71",
+      "type": "batch_total_mismatch",
+      "severity": "critical",
+      "processor": "dLocal",
+      "batch_id": "DLO-MXN-20260813",
+      "metric": "gross",
+      "transaction_ids": [],
+      "description": "Batch DLO-MXN-20260813 claims gross of MX$72,944.22 MXN, but its 13 comparable lines sum to MX$67,878.75 MXN.",
+      "expected": "MX$67,878.75 MXN",
+      "actual": "MX$72,944.22 MXN",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Do not post this payout until the processor reissues the file -- header and detail disagree, so one of them is wrong.",
+      "source_file": "DLO-MXN-20260813.json",
+      "source_format": "json",
+      "source_locator": "Batch header"
+    },
+    {
+      "id": "BATC-f2ee0787",
+      "type": "batch_total_mismatch",
+      "severity": "critical",
+      "processor": "dLocal",
+      "batch_id": "DLO-MXN-20260813",
+      "metric": "net",
+      "transaction_ids": [],
+      "description": "Batch DLO-MXN-20260813 claims net of MX$70,514.97 MXN, but its 13 comparable lines sum to MX$65,580.14 MXN.",
+      "expected": "MX$65,580.14 MXN",
+      "actual": "MX$70,514.97 MXN",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Do not post this payout until the processor reissues the file -- header and detail disagree, so one of them is wrong.",
+      "source_file": "DLO-MXN-20260813.json",
+      "source_format": "json",
+      "source_locator": "Batch header"
+    },
+    {
       "id": "MISS-667d6dc1",
       "type": "missing_settlement",
       "severity": "high",
       "processor": "dLocal",
       "batch_id": null,
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00096"
       ],
@@ -4194,31 +4356,12 @@
       "source_locator": "Row 98"
     },
     {
-      "id": "BATC-c5ffaa3f",
-      "type": "batch_total_mismatch",
-      "severity": "high",
-      "processor": "PayU Latam",
-      "batch_id": "PAYU-COP-20260811",
-      "transaction_ids": [],
-      "description": "Batch PAYU-COP-20260811 claims net of COL$19,413,541 COP, but its 21 lines sum to COL$18,666,866 COP.",
-      "expected": "COL$18,666,866 COP",
-      "actual": "COL$19,413,541 COP",
-      "impact": {
-        "amount": "-746675",
-        "currency": "COP"
-      },
-      "impact_display": "COL$-746,675 COP",
-      "recommended_action": "Do not post this payout until the processor reissues the file -- header and detail disagree, so one of them is wrong.",
-      "source_file": "PAYU-COP-20260811.xml",
-      "source_format": "xml",
-      "source_locator": "Batch header"
-    },
-    {
       "id": "MISS-86040d33",
       "type": "missing_settlement",
       "severity": "high",
       "processor": "dLocal",
       "batch_id": null,
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00270"
       ],
@@ -4241,6 +4384,7 @@
       "severity": "high",
       "processor": "Adyen",
       "batch_id": "ADY-BRL-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00226"
       ],
@@ -4258,11 +4402,66 @@
       "source_locator": "Row 19"
     },
     {
+      "id": "BATC-960b2325",
+      "type": "batch_currency_mismatch",
+      "severity": "high",
+      "processor": "dLocal",
+      "batch_id": "DLO-MXN-20260813",
+      "metric": "currency",
+      "transaction_ids": [],
+      "description": "Batch DLO-MXN-20260813 declares MXN, but detail lines also contain USD.",
+      "expected": "MXN",
+      "actual": "USD",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Do not post this payout until the processor splits or corrects the mixed-currency detail. Header totals are validated only against lines in the declared batch currency.",
+      "source_file": "DLO-MXN-20260813.json",
+      "source_format": "json",
+      "source_locator": "Batch header"
+    },
+    {
+      "id": "BATC-a2a55c53",
+      "type": "batch_total_mismatch",
+      "severity": "high",
+      "processor": "PayU Latam",
+      "batch_id": "PAYU-COP-20260811",
+      "metric": "net",
+      "transaction_ids": [],
+      "description": "Batch PAYU-COP-20260811 claims net of COL$19,413,541 COP, but its 21 comparable lines sum to COL$18,666,866 COP.",
+      "expected": "COL$18,666,866 COP",
+      "actual": "COL$19,413,541 COP",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Do not post this payout until the processor reissues the file -- header and detail disagree, so one of them is wrong.",
+      "source_file": "PAYU-COP-20260811.xml",
+      "source_format": "xml",
+      "source_locator": "Batch header"
+    },
+    {
+      "id": "BATC-6a9ddc7f",
+      "type": "batch_total_mismatch",
+      "severity": "high",
+      "processor": "dLocal",
+      "batch_id": "DLO-MXN-20260813",
+      "metric": "fees",
+      "transaction_ids": [],
+      "description": "Batch DLO-MXN-20260813 claims fees of MX$2,429.25 MXN, but its 13 comparable lines sum to MX$2,298.61 MXN.",
+      "expected": "MX$2,298.61 MXN",
+      "actual": "MX$2,429.25 MXN",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Do not post this payout until the processor reissues the file -- header and detail disagree, so one of them is wrong.",
+      "source_file": "DLO-MXN-20260813.json",
+      "source_format": "json",
+      "source_locator": "Batch header"
+    },
+    {
       "id": "PROC-e94bedd1",
       "type": "processor_mismatch",
       "severity": "high",
       "processor": "dLocal",
       "batch_id": "DLO-BRL-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00008"
       ],
@@ -4282,6 +4481,7 @@
       "severity": "high",
       "processor": "dLocal",
       "batch_id": "DLO-COP-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00004"
       ],
@@ -4301,6 +4501,7 @@
       "severity": "high",
       "processor": "Stripe",
       "batch_id": "po-MXN-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00302"
       ],
@@ -4320,6 +4521,7 @@
       "severity": "medium",
       "processor": "Adyen",
       "batch_id": "ADY-BRL-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00264"
       ],
@@ -4342,6 +4544,7 @@
       "severity": "medium",
       "processor": "dLocal",
       "batch_id": "DLO-COP-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00243"
       ],
@@ -4364,6 +4567,7 @@
       "severity": "medium",
       "processor": "Stripe",
       "batch_id": "po-MXN-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00302"
       ],
@@ -4386,6 +4590,7 @@
       "severity": "medium",
       "processor": "Adyen",
       "batch_id": "ADY-BRL-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00046"
       ],
@@ -4408,6 +4613,7 @@
       "severity": "medium",
       "processor": "Stripe",
       "batch_id": "po-USD-20260813",
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00090"
       ],
@@ -4430,6 +4636,7 @@
       "severity": "low",
       "processor": "Adyen",
       "batch_id": null,
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00006"
       ],
@@ -4449,6 +4656,7 @@
       "severity": "low",
       "processor": "Adyen",
       "batch_id": null,
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00084"
       ],
@@ -4468,6 +4676,7 @@
       "severity": "low",
       "processor": "dLocal",
       "batch_id": null,
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00097"
       ],
@@ -4487,6 +4696,7 @@
       "severity": "low",
       "processor": "Adyen",
       "batch_id": null,
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00109"
       ],
@@ -4506,6 +4716,7 @@
       "severity": "low",
       "processor": "Adyen",
       "batch_id": null,
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00136"
       ],
@@ -4525,6 +4736,7 @@
       "severity": "low",
       "processor": "Adyen",
       "batch_id": null,
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00142"
       ],
@@ -4544,6 +4756,7 @@
       "severity": "low",
       "processor": "Adyen",
       "batch_id": null,
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00165"
       ],
@@ -4563,6 +4776,7 @@
       "severity": "low",
       "processor": "Stripe",
       "batch_id": null,
+      "metric": null,
       "transaction_ids": [
         "CT-202608-00333"
       ],

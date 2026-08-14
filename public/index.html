@@ -95,27 +95,22 @@
   }
   .brand-mark span { background: var(--accent); border-radius: 2px; }
   .brand-mark span:nth-child(2), .brand-mark span:nth-child(3) { opacity: .55; }
-  .header-meta { display: flex; align-items: center; gap: 18px; font-size: 14px; }
-  .workspace-label { color: var(--muted); }
-  .source-link { min-height: 44px; display: inline-flex; align-items: center; font-weight: 600; text-decoration: none; }
-
   .shell { width: min(1120px, calc(100% - 48px)); margin: 0 auto; padding: 40px 0 80px; }
   .stepper {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    align-items: center;
     max-width: 480px;
     margin: 0 0 44px;
     padding: 0;
     list-style: none;
   }
-  .stepper li { position: relative; min-width: 0; }
+  .stepper li { display: flex; align-items: center; min-width: 0; }
+  .stepper li:not(:last-child) { flex: 1; }
   .stepper li:not(:last-child)::after {
     content: "";
-    position: absolute;
-    top: 14px;
-    left: 31px;
-    right: 7px;
+    flex: 1;
     height: 1px;
+    margin: 0 12px;
     background: var(--line-strong);
   }
   .step {
@@ -509,7 +504,6 @@
   }
   @media (max-width: 768px) {
     .app-header { padding: 0 20px; }
-    .workspace-label { display: none; }
     .shell { width: calc(100% - 32px); padding-top: 28px; }
     .stepper { margin-bottom: 30px; max-width: none; }
     .step { grid-template-columns: 44px; width: 44px; gap: 0; }
@@ -534,7 +528,6 @@
   }
   @media (max-width: 520px) {
     .app-header { min-height: 58px; padding: 0 16px; }
-    .source-link { display: none; }
     .shell { width: calc(100% - 24px); padding: 22px 0 56px; }
     h1 { font-size: 34px; }
     .upload-target { align-items: flex-start; padding: 16px; }
@@ -622,10 +615,6 @@
     <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
     <span>Reconcile</span>
   </a>
-  <div class="header-meta">
-    <span class="workspace-label">CafeTerra · Finance</span>
-    <a class="source-link" href="https://github.com/scandolo/settlement-reconciliation-engine">Source</a>
-  </div>
 </header>
 
 <main class="shell" id="app" aria-live="polite">

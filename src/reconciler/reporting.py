@@ -324,7 +324,7 @@ def to_markdown(result: ReconciliationResult) -> str:
     out: list[str] = []
     add = out.append
 
-    add(f"# Settlement reconciliation — as of {result.as_of}")
+    add(f"# Settlement reconciliation - as of {result.as_of}")
     add("")
     add(f"_Generated {data['generated_at']}_")
     add("")
@@ -358,7 +358,7 @@ def to_markdown(result: ReconciliationResult) -> str:
         add("## Money at risk")
         add("")
         add("Positive means CafeTerra is owed money; negative means CafeTerra was overpaid "
-            "and should expect a clawback. Amounts are never converted for matching — the "
+            "and should expect a clawback. Amounts are never converted for matching - the "
             "USD figure below is indicative, for ranking only.")
         add("")
         add("| Currency | Net exposure |")
@@ -389,8 +389,8 @@ def to_markdown(result: ReconciliationResult) -> str:
     add("| # | ID | Severity | Type | Processor | Transaction | Impact | Issue |")
     add("| ---: | --- | --- | --- | --- | --- | ---: | --- |")
     for index, finding in enumerate(result.worklist(), start=1):
-        txns = ", ".join(finding.transaction_ids) or "—"
-        impact = str(finding.impact) if finding.impact else "—"
+        txns = ", ".join(finding.transaction_ids) or "-"
+        impact = str(finding.impact) if finding.impact else "-"
         add(
             f"| {index} | `{finding.id}` | {finding.severity.value} | `{finding.type.value}` | "
             f"{finding.processor} | {txns} | {impact} | {finding.description} |"
@@ -400,7 +400,7 @@ def to_markdown(result: ReconciliationResult) -> str:
     add("## Recommended actions")
     add("")
     for finding in result.worklist():
-        add(f"- **`{finding.id}`** ({finding.severity.value}) — {finding.recommended_action}")
+        add(f"- **`{finding.id}`** ({finding.severity.value}) - {finding.recommended_action}")
     add("")
     return "\n".join(out) + "\n"
 

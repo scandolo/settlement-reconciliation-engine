@@ -1,11 +1,11 @@
-# Settlement Reconciliation Engine
+# Payment Reconciliation
 
 Automated settlement reconciliation for a merchant taking payments through
 multiple processors, in multiple currencies, across multiple countries.
 
 It ingests settlement reports in whatever format each processor sends, matches
 them line by line against the internal transaction ledger, and produces a
-ranked worklist of everything that does not add up — with the money at stake
+ranked worklist of everything that does not add up - with the money at stake
 and the next action attached to each finding.
 
 **Live dashboard:** [settlement-reconciliation-engine.vercel.app](https://settlement-reconciliation-engine.vercel.app)
@@ -84,15 +84,15 @@ And, from `verify`:
 
 ## Who this is for, and why it looks like this
 
-The user is a **reconciliation analyst closing the month** — the person
-currently spending 60+ hours doing this by hand — and secondarily the **CFO**
+The user is a **reconciliation analyst closing the month** - the person
+currently spending 60+ hours doing this by hand - and secondarily the **CFO**
 who wants one number. Three consequences run through the whole design:
 
 1. **It is an exception tool, not a ledger dump.** Most of the 212 settlement
    lines require no action; nobody needs to inspect those one by one. The
    output is the 26 actionable findings, ordered by money at risk rather than
    by file order, so the worst thing is the first thing.
-2. **Every finding carries its next action.** Not an error code — the sentence
+2. **Every finding carries its next action.** Not an error code - the sentence
    the analyst would otherwise have to compose: which processor to contact,
    what to quote, and what happens if they do nothing.
 3. **The numbers arrive in the format they already work in.** Terminal for a
@@ -123,7 +123,7 @@ internal ledger ─────────────────────�
 | `models.py` | Canonical domain types: transactions, settlement lines, batches, findings |
 | `processors/` | One adapter per processor; the only code that knows about file formats |
 | `detectors.py` | One small function per discrepancy rule |
-| `engine.py` | Orchestration only — index the ledger, walk batches, run detectors |
+| `engine.py` | Orchestration only - index the ledger, walk batches, run detectors |
 | `rules.py` | Tolerances, materiality, severity banding |
 | `reporting.py` | One report model, four renderers |
 | `datagen.py` | Deterministic test data, plus the ground truth that grades it |
@@ -147,7 +147,7 @@ Each maps to a question the finance team actually asks:
 ## Design decisions
 
 **Currency safety is structural, not defensive.** `Money` refuses to add,
-subtract or compare across currencies — it raises `CurrencyMismatchError`. The
+subtract or compare across currencies - it raises `CurrencyMismatchError`. The
 engine cannot silently mix BRL and USD because the type system will not let it.
 Each amount is a `Decimal` quantised to that currency's real ISO exponent, and
 that detail matters: **COP has no minor unit**, so any code assuming two
@@ -158,8 +158,8 @@ built around cents.
 **We never convert currencies to match.** Converting would manufacture
 discrepancies out of FX movement. Amounts are compared only in their original
 currency, and exposure is reported per currency. There is exactly one place a
-rate appears — ranking severity across currencies, so a large Colombian break
-and a large US one sort sensibly in one worklist — and it is labelled
+rate appears - ranking severity across currencies, so a large Colombian break
+and a large US one sort sensibly in one worklist - and it is labelled
 indicative everywhere it surfaces.
 
 **Configuration over code.** Currencies are a registry. Processors are a
@@ -170,7 +170,7 @@ is a data change, not a deploy of new logic.
 **Detectors are focused and independent.** Each guards its own preconditions
 and yields findings. They can run in any
 order and none can corrupt another. Adding a rule does not mean touching a
-600-line class — it means writing a function and decorating it.
+600-line class - it means writing a function and decorating it.
 
 **Content sniffing, not filename conventions.** Adapters identify their own
 files by looking inside them, because processors change export filenames far
@@ -187,7 +187,7 @@ claim.
 ## Processors
 
 Four real processors, represented by adapters informed by their public
-reconciliation and payment documentation — because the awkwardness is the
+reconciliation and payment documentation - because the awkwardness is the
 point. Two of these are CSV and look nothing alike, which is exactly the
 situation a real reconciliation team is in.
 
@@ -207,7 +207,7 @@ configuration, not claims about the processors' public pricing or payout terms.
 | **Adyen** | BR, MX, CO, US | USD, BRL, MXN | CSV | 2d | Fee split across commission / markup / scheme fees / interchange; separate `Gross Debit`/`Gross Credit` columns; settlement currency can differ from capture currency |
 | **Stripe** | MX, US | USD, MXN | CSV | 3d | Lowercase currency codes; refund/payout/adjustment rows share the file and must be filtered out; payout row states the true deposit |
 | **dLocal** | BR, MX, CO | BRL, MXN, COP, USD | JSON | 5d | Amounts as decimal strings; deduction split into commission plus local tax (IOF/IVA) |
-| **PayU Latam** | CO | COP | XML | 7d | Money in element attributes; whole-peso COP; carries both `payuOrderId` and our `reference` — matching on the wrong one is the classic bug |
+| **PayU Latam** | CO | COP | XML | 7d | Money in element attributes; whole-peso COP; carries both `payuOrderId` and our `reference` - matching on the wrong one is the classic bug |
 
 Public references used for the models:
 
@@ -235,7 +235,7 @@ class NewBankAdapter:
 ```
 
 Then add it to `ADAPTERS` in `processors/__init__.py`. That is the whole change
-— the engine, detectors, reports and dashboard pick it up automatically. A new
+- the engine, detectors, reports and dashboard pick it up automatically. A new
 currency is one line: `REGISTRY.register(Currency("PEN", 2, "S/"))`.
 
 ---
@@ -269,15 +269,15 @@ never sit at the same priority.
 
 All four in the brief are implemented:
 
-- **Settlement aging** — per-processor SLAs (2–7 days) with a configurable
+- **Settlement aging** - per-processor SLAs (2–7 days) with a configurable
   grace period; aging and missing are separate findings at different severities.
-- **Batch-level validation** — header gross/fees/net checked against the sum of
+- **Batch-level validation** - header gross/fees/net checked against the sum of
   the detail lines, for every format that restates them.
-- **Configurable tolerance rules** — absolute tolerance expressed in *minor
+- **Configurable tolerance rules** - absolute tolerance expressed in *minor
   units* so it adapts to each currency automatically, plus a relative fee
   allowance and a materiality threshold. `--strict` switches to a zero-tolerance
   audit profile.
-- **Interactive workflow** — the deployed page walks through file selection,
+- **Interactive workflow** - the deployed page walks through file selection,
   preflight, reconciliation, exceptions, matched transactions, and batches.
   Every exception expands to its expected/actual values, recommended action,
   and exact source row or JSON/XML path. CSV, Markdown, and JSON exports are
@@ -297,13 +297,13 @@ make test     # 29 tests
 
 Three layers, matching the three things that can be wrong:
 
-- **Money** — quantisation per currency, refusal to mix currencies, and parsing
+- **Money** - quantisation per currency, refusal to mix currencies, and parsing
   of the localized formats represented in the fixtures (`R$ 1.234,56`, `1,234.56`, `(45.10)`,
   `2.000.000`). Note `10.567` is 10.57 in BRL and 10,567 in COP; the parser
   reads separators against the currency rather than guessing.
-- **Adapters** — every writer in `datagen.py` is the exact inverse of its
+- **Adapters** - every writer in `datagen.py` is the exact inverse of its
   adapter, so all four formats are asserted to round-trip byte-for-value.
-- **Detectors** — each rule is tested firing when it should *and* staying quiet
+- **Detectors** - each rule is tested firing when it should *and* staying quiet
   when it should not (a fee one centavo off the rate card is not a finding).
 
 Plus end-to-end: determinism, 100% ground-truth recall, no silent currency
@@ -335,7 +335,7 @@ a finance workflow rather than raw output.
 With more than two hours, in priority order:
 
 1. **Bank statement as the third leg.** Right now this reconciles ledger against
-   settlement reports. The full problem is three-way — ledger, settlement, and
+   settlement reports. The full problem is three-way - ledger, settlement, and
    what actually landed in the bank. A processor can report a payout it never
    sent, and only the bank statement catches that.
 2. **Persistence and run-over-run state.** Findings have stable IDs precisely so

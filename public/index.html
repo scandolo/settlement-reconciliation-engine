@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f6f5f0">
-<title>Reconcile — Settlement reconciliation</title>
+<title>Payment reconciliation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
@@ -76,30 +76,17 @@
     z-index: 20;
     backdrop-filter: blur(12px);
   }
-  .brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--ink);
-    text-decoration: none;
+  .app-title {
+    margin: 0;
     font-weight: 700;
     letter-spacing: -.02em;
-    min-height: 44px;
+    color: var(--ink);
   }
-  .brand-mark {
-    width: 23px;
-    height: 23px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3px;
-  }
-  .brand-mark span { background: var(--accent); border-radius: 2px; }
-  .brand-mark span:nth-child(2), .brand-mark span:nth-child(3) { opacity: .55; }
   .shell { width: min(1120px, calc(100% - 48px)); margin: 0 auto; padding: 40px 0 80px; }
   .stepper {
     display: flex;
     align-items: center;
-    max-width: 480px;
+    max-width: 680px;
     margin: 0 0 44px;
     padding: 0;
     list-style: none;
@@ -176,7 +163,18 @@
   .mono, code { font-family: "DM Mono", ui-monospace, monospace; font-size: .9em; }
   .tabular { font-variant-numeric: tabular-nums; }
 
-  .setup-grid { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 32px; align-items: start; }
+  .step-content { max-width: 820px; }
+  .choice-list { display: grid; gap: 12px; margin-bottom: 20px; }
+  .source-choice {
+    width: 100%; min-height: 82px; display: flex; align-items: center; justify-content: space-between;
+    gap: 20px; padding: 16px 18px; text-align: left; color: var(--ink);
+    border: 1px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface);
+  }
+  .source-choice:hover { border-color: var(--accent); }
+  .source-choice.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .choice-title { display: block; font-weight: 700; }
+  .choice-description { display: block; margin-top: 2px; color: var(--muted); font-size: 14px; font-weight: 400; }
+  .choice-state { flex: 0 0 auto; color: var(--accent); font-size: 14px; font-weight: 700; }
   .field-stack { display: grid; gap: 16px; }
   .upload-target {
     display: flex;
@@ -231,7 +229,7 @@
   .mini-file-list { margin: 0 0 8px; padding: 0; list-style: none; border-top: 1px solid var(--line); }
   .mini-file-list li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
   .mini-file-list span:last-child { color: var(--muted); }
-  .date-field { padding-top: 4px; }
+  .date-field { max-width: 360px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
   .date-field label { display: block; margin-bottom: 7px; font-size: 14px; font-weight: 600; }
   input[type="date"], input[type="search"], select {
     width: 100%;
@@ -498,7 +496,6 @@
   }
   @media (max-width: 1024px) {
     .shell { width: min(100% - 40px, 960px); }
-    .setup-grid { grid-template-columns: minmax(0, 1fr) 210px; gap: 24px; }
     .exception > summary { grid-template-columns: 86px minmax(0, 1fr) minmax(110px, auto); }
     .exception-body { padding-left: 104px; }
   }
@@ -530,6 +527,7 @@
     .app-header { min-height: 58px; padding: 0 16px; }
     .shell { width: calc(100% - 24px); padding: 22px 0 56px; }
     h1 { font-size: 34px; }
+    .source-choice { align-items: flex-start; flex-direction: column; gap: 8px; }
     .upload-target { align-items: flex-start; padding: 16px; }
     .file-glyph { display: none; }
     .file-action { flex: 0 0 auto; }
@@ -611,79 +609,66 @@
 </head>
 <body>
 <header class="app-header">
-  <a class="brand" href="#new" id="brand-link" aria-label="Reconcile home">
-    <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
-    <span>Reconcile</span>
-  </a>
+  <p class="app-title">Payment reconciliation</p>
 </header>
 
 <main class="shell" id="app" aria-live="polite">
   <nav aria-label="Reconciliation progress">
     <ol class="stepper">
-      <li><button class="step" type="button" data-go-step="upload" aria-current="step"><span class="step-number">1</span><span class="step-label">Files</span></button></li>
-      <li><button class="step" type="button" data-go-step="review" disabled><span class="step-number">2</span><span class="step-label">Review</span></button></li>
-      <li><button class="step" type="button" data-go-step="results" disabled><span class="step-number">3</span><span class="step-label">Results</span></button></li>
+      <li><button class="step" type="button" data-go-step="ledger" aria-current="step"><span class="step-number">1</span><span class="step-label">Ledger</span></button></li>
+      <li><button class="step" type="button" data-go-step="settlements" disabled><span class="step-number">2</span><span class="step-label">Reports</span></button></li>
+      <li><button class="step" type="button" data-go-step="review" disabled><span class="step-number">3</span><span class="step-label">Review</span></button></li>
+      <li><button class="step" type="button" data-go-step="results" disabled><span class="step-number">4</span><span class="step-label">Results</span></button></li>
     </ol>
   </nav>
 
-  <section class="screen" id="screen-upload" aria-labelledby="upload-title">
+  <section class="screen" id="screen-ledger" aria-labelledby="ledger-title">
     <div class="page-head">
       <div>
-        <p class="eyebrow">New reconciliation</p>
-        <h1 id="upload-title" tabindex="-1">Bring the ledger and payouts together.</h1>
-        <p class="lede">Compare internal transactions with every processor settlement for the close date.</p>
+        <p class="eyebrow">Step 1 of 4</p>
+        <h1 id="ledger-title" tabindex="-1">Choose the internal ledger.</h1>
+        <p class="lede">Start with the transactions your system expects processors to settle.</p>
       </div>
     </div>
-
-    <div class="setup-grid">
-      <div class="field-stack">
-        <div>
-          <div class="upload-target" data-drop="ledger">
-            <span class="file-glyph" aria-hidden="true"></span>
-            <span class="upload-copy">
-              <span class="upload-label">Internal ledger</span>
-              <span class="upload-name" id="ledger-name">Loading sample…</span>
-              <span class="upload-meta" id="ledger-meta">CSV</span>
-            </span>
-            <button class="file-action" type="button" data-pick="ledger">Replace</button>
-            <input class="sr-only" id="ledger-input" type="file" accept=".csv,text/csv" aria-label="Replace internal ledger">
-          </div>
-        </div>
-
-        <div>
-          <div class="upload-target" data-drop="settlement">
-            <span class="file-glyph" aria-hidden="true"></span>
-            <span class="upload-copy">
-              <span class="upload-label">Settlement reports</span>
-              <span class="upload-name" id="settlement-name">Loading sample…</span>
-              <span class="upload-meta" id="settlement-meta">CSV, JSON or XML</span>
-            </span>
-            <button class="file-action" type="button" data-pick="settlement">Replace</button>
-            <input class="sr-only" id="settlement-input" type="file" accept=".csv,.json,.xml,text/csv,application/json,text/xml,application/xml" multiple aria-label="Replace settlement reports">
-          </div>
-          <details class="file-list-disclosure">
-            <summary id="show-files">Show settlement files</summary>
-            <ul class="mini-file-list" id="mini-file-list"></ul>
-          </details>
-        </div>
+    <div class="step-content">
+      <div class="choice-list">
+        <button class="source-choice selected" type="button" data-use-demo="ledger"><span><span class="choice-title">Use demo ledger</span><span class="choice-description">340 transactions across four currencies.</span></span><span class="choice-state">Selected</span></button>
+        <button class="source-choice" type="button" data-pick="ledger"><span><span class="choice-title">Upload ledger CSV</span><span class="choice-description">See the required structure, then choose a file.</span></span><span class="choice-state">Choose file</span></button>
       </div>
+      <div class="upload-target" data-drop="ledger">
+        <span class="file-glyph" aria-hidden="true"></span>
+        <span class="upload-copy"><span class="upload-label">Selected ledger</span><span class="upload-name" id="ledger-name">Loading sample...</span><span class="upload-meta" id="ledger-meta">CSV</span></span>
+        <input class="sr-only" id="ledger-input" type="file" accept=".csv,text/csv" aria-label="Upload internal ledger">
+      </div>
+    </div>
+    <div class="action-row">
+      <span class="small" id="ledger-note">Demo ledger selected.</span>
+      <button class="button primary" id="continue-to-settlements" type="button">Continue to settlement reports</button>
+    </div>
+  </section>
 
-      <aside class="date-field">
+  <section class="screen" id="screen-settlements" aria-labelledby="settlements-title" hidden>
+    <div class="page-head"><div><p class="eyebrow">Step 2 of 4</p><h1 id="settlements-title" tabindex="-1">Choose settlement reports.</h1><p class="lede">Add every payout report that should be compared with the ledger.</p></div></div>
+    <div class="step-content">
+      <div class="choice-list">
+        <button class="source-choice selected" type="button" data-use-demo="settlement"><span><span class="choice-title">Use demo settlement reports</span><span class="choice-description">Nine reports from four supported processors.</span></span><span class="choice-state">Selected</span></button>
+        <button class="source-choice" type="button" data-pick="settlement"><span><span class="choice-title">Upload settlement reports</span><span class="choice-description">See the required data concepts, then choose files.</span></span><span class="choice-state">Choose files</span></button>
+      </div>
+      <div class="upload-target" data-drop="settlement">
+        <span class="file-glyph" aria-hidden="true"></span>
+        <span class="upload-copy"><span class="upload-label">Selected reports</span><span class="upload-name" id="settlement-name">Loading sample...</span><span class="upload-meta" id="settlement-meta">CSV, JSON or XML</span></span>
+        <input class="sr-only" id="settlement-input" type="file" accept=".csv,.json,.xml,text/csv,application/json,text/xml,application/xml" multiple aria-label="Upload settlement reports">
+      </div>
+      <details class="file-list-disclosure"><summary id="show-files">Show settlement files</summary><ul class="mini-file-list" id="mini-file-list"></ul></details>
+      <div class="date-field">
         <label for="as-of">Reconcile as of</label>
         <input id="as-of" type="date" value="2026-08-14">
         <p class="small" style="margin:8px 0 0">Transactions due by this date are included.</p>
-        <details class="advanced">
-          <summary>Matching rules</summary>
-          <div class="advanced-content">
-            <p>Exact transaction ID and currency.</p>
-            <p>Contract fee tolerances and processor settlement SLAs.</p>
-          </div>
-        </details>
-      </aside>
+        <details class="advanced"><summary>Matching rules</summary><div class="advanced-content"><p>Exact transaction ID and currency.</p><p>Contract fee tolerances and processor settlement SLAs.</p></div></details>
+      </div>
     </div>
-
     <div class="action-row">
-      <span class="small" id="sample-note">Included sample is ready to review.</span>
+      <button class="button secondary" type="button" data-go-step="ledger">Back to ledger</button>
       <button class="button primary" id="review-files" type="button">Review files</button>
     </div>
   </section>
@@ -713,7 +698,7 @@
     </details>
 
     <div class="action-row">
-      <button class="button secondary" type="button" data-go-step="upload">Back to files</button>
+      <button class="button secondary" type="button" data-go-step="settlements">Back to reports</button>
       <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end">
         <span class="run-state" id="run-state"><span class="spinner" aria-hidden="true"></span><span>Comparing transactions and payouts…</span></span>
         <button class="button primary" id="run-reconciliation" type="button">Reconcile transactions</button>
@@ -729,7 +714,7 @@
         <p class="lede" id="results-lede">Loading results…</p>
       </div>
       <div class="results-actions">
-        <button class="button secondary" type="button" data-go-step="upload">Add or replace files</button>
+        <button class="button secondary" type="button" data-go-step="ledger">Add or replace files</button>
         <details class="export-menu">
           <summary class="button primary">Export <span aria-hidden="true">↓</span></summary>
           <div class="export-panel">
@@ -800,16 +785,25 @@
   </section>
 </main>
 
+<dialog id="ledger-guide" aria-labelledby="ledger-guide-title">
+  <div class="guide-head"><h2 id="ledger-guide-title">Internal ledger structure</h2><p class="small" style="margin:0">Upload one CSV row per internal transaction. Map source columns to the canonical fields below.</p></div>
+  <div class="guide-body">
+    <div class="format-row"><div class="format-name">Identity</div><div class="format-fields"><span class="mono">transaction_id</span> and <span class="mono">processor</span></div></div>
+    <div class="format-row"><div class="format-name">Money</div><div class="format-fields"><span class="mono">amount</span> and ISO <span class="mono">currency</span></div></div>
+    <div class="format-row"><div class="format-name">Lifecycle</div><div class="format-fields"><span class="mono">status</span> and <span class="mono">captured_at</span>; payment method is optional context.</div></div>
+  </div>
+  <div class="guide-actions"><button class="button secondary" id="close-ledger-guide" type="button">Cancel</button><button class="button primary" id="choose-ledger-file" type="button">Choose ledger CSV</button></div>
+</dialog>
+
 <dialog id="settlement-guide" aria-labelledby="settlement-guide-title">
   <div class="guide-head">
-    <h2 id="settlement-guide-title">Settlement file structure</h2>
-    <p class="small" style="margin:0">Upload original processor exports. Filenames do not matter; the file contents identify the processor.</p>
+    <h2 id="settlement-guide-title">Settlement report structure</h2>
+    <p class="small" style="margin:0">Upload original processor exports. Exact field names and nesting vary, so preflight identifies supported schemas from their contents.</p>
   </div>
   <div class="guide-body">
-    <div class="format-row"><div class="format-name">Adyen · CSV</div><div class="format-fields">Merchant Reference, Batch Number, Booking Date, Gross/Net Currency, Gross/Net Credit or Debit, and fee components.</div></div>
-    <div class="format-row"><div class="format-name">Stripe · CSV</div><div class="format-fields"><span class="mono">merchant_reference, gross, fee, net, currency, reporting_category, automatic_payout_id, automatic_payout_effective_at_utc</span></div></div>
-    <div class="format-row"><div class="format-name">dLocal · JSON</div><div class="format-fields"><span class="mono">settlement</span> object with settlement ID/date/currency and a <span class="mono">payments</span> array containing order ID, amount, commission, tax, and net amount.</div></div>
-    <div class="format-row"><div class="format-name">PayU · XML</div><div class="format-fields"><span class="mono">ReconciliationReport</span> with batch/date/currency attributes, <span class="mono">Transaction</span> entries, and header totals.</div></div>
+    <div class="format-row"><div class="format-name">Batch</div><div class="format-fields">Processor, batch ID, settlement date, and settlement currency.</div></div>
+    <div class="format-row"><div class="format-name">Line items</div><div class="format-fields">Merchant transaction reference, gross amount, fees, net amount, and currency.</div></div>
+    <div class="format-row"><div class="format-name">Supported</div><div class="format-fields">Adyen and Stripe CSV, dLocal JSON, and PayU XML exports. Filenames do not matter.</div></div>
   </div>
   <div class="guide-actions">
     <button class="button secondary" id="close-settlement-guide" type="button">Cancel</button>
@@ -829,7 +823,7 @@ const humanize = value => String(value || "").replaceAll("_", " ").replace(/\b\w
 let report = null;
 let sampleReport = null;
 let customPrepared = false;
-let currentStep = "upload";
+let currentStep = "ledger";
 let highestStep = 1;
 let severityFilter = "all";
 let exceptionQuery = "";
@@ -850,6 +844,7 @@ fetch("data/report.json")
     renderReview();
     renderResults();
     const requested = location.hash.slice(1);
+    if (requested === "settlements") goToStep("settlements");
     if (requested === "review") goToStep("review");
     if (requested.startsWith("results")) {
       goToStep("results");
@@ -873,16 +868,15 @@ function hydrateUpload() {
 
 document.querySelectorAll("[data-pick]").forEach(button => {
   button.addEventListener("click", () => {
-    if (button.dataset.pick === "settlement") {
-      const guide = $("settlement-guide");
-      if (guide.showModal) guide.showModal();
-      else $("settlement-input").click();
-      return;
-    }
-    $(`${button.dataset.pick}-input`).click();
+    const kind = button.dataset.pick;
+    const guide = $(`${kind}-guide`);
+    if (guide?.showModal) guide.showModal();
+    else $(`${kind}-input`).click();
   });
 });
 
+$("close-ledger-guide").addEventListener("click", () => $("ledger-guide").close());
+$("choose-ledger-file").addEventListener("click", () => { $("ledger-guide").close(); $("ledger-input").click(); });
 $("close-settlement-guide").addEventListener("click", () => $("settlement-guide").close());
 $("choose-settlement-files").addEventListener("click", () => {
   $("settlement-guide").close();
@@ -895,7 +889,8 @@ $("ledger-input").addEventListener("change", event => {
   if (!selectedLedger) return;
   $("ledger-name").textContent = selectedLedger.name;
   $("ledger-meta").textContent = `${formatBytes(selectedLedger.size)} · selected for preflight`;
-  $("sample-note").textContent = "Selected files will be checked before reconciliation.";
+  setSourceChoice("ledger", false);
+  $("ledger-note").textContent = "Uploaded ledger selected.";
 });
 
 $("settlement-input").addEventListener("change", event => {
@@ -906,8 +901,27 @@ $("settlement-input").addEventListener("change", event => {
   $("settlement-meta").textContent = `${formatBytes(selectedSettlements.reduce((sum, file) => sum + file.size, 0))} · selected for preflight`;
   $("show-files").textContent = `Show ${selectedSettlements.length} selected file${selectedSettlements.length === 1 ? "" : "s"}`;
   $("mini-file-list").innerHTML = selectedSettlements.map(file => `<li><span class="mono">${escapeHtml(file.name)}</span><span>${escapeHtml(file.name.split(".").pop().toUpperCase())}</span></li>`).join("");
-  $("sample-note").textContent = "Selected files will be checked before reconciliation.";
+  setSourceChoice("settlement", false);
 });
+
+document.querySelectorAll("[data-use-demo]").forEach(button => button.addEventListener("click", () => {
+  const kind = button.dataset.useDemo;
+  if (kind === "ledger") selectedLedger = null;
+  else selectedSettlements = null;
+  report = sampleReport;
+  customPrepared = false;
+  hydrateUpload();
+  setSourceChoice(kind, true);
+  if (kind === "ledger") $("ledger-note").textContent = "Demo ledger selected.";
+}));
+
+function setSourceChoice(kind, demo) {
+  document.querySelectorAll(`[data-use-demo="${kind}"], [data-pick="${kind}"]`).forEach(button => {
+    const selected = demo ? button.dataset.useDemo === kind : button.dataset.pick === kind;
+    button.classList.toggle("selected", selected);
+    button.querySelector(".choice-state").textContent = selected ? "Selected" : (button.dataset.pick === "ledger" ? "Choose file" : "Choose files");
+  });
+}
 
 document.querySelectorAll("[data-drop]").forEach(target => {
   ["dragenter", "dragover"].forEach(type => target.addEventListener(type, event => {
@@ -922,6 +936,8 @@ document.querySelectorAll("[data-drop]").forEach(target => {
     input.dispatchEvent(new Event("change"));
   });
 });
+
+$("continue-to-settlements").addEventListener("click", () => goToStep("settlements"));
 
 $("review-files").addEventListener("click", async () => {
   const customSelection = selectedLedger || selectedSettlements;
@@ -971,11 +987,9 @@ document.querySelectorAll("[data-go-step]").forEach(button => {
   });
 });
 
-$("brand-link").addEventListener("click", event => { event.preventDefault(); goToStep("upload"); });
-
 function goToStep(step) {
   if (!report) return;
-  const order = {upload: 1, review: 2, results: 3};
+  const order = {ledger: 1, settlements: 2, review: 3, results: 4};
   highestStep = Math.max(highestStep, order[step]);
   currentStep = step;
   document.querySelectorAll(".screen").forEach(screen => { screen.hidden = screen.id !== `screen-${step}`; });
@@ -986,10 +1000,10 @@ function goToStep(step) {
     if (number === order[step]) button.setAttribute("aria-current", "step");
     else button.removeAttribute("aria-current");
   });
-  const title = $({upload: "upload-title", review: "review-title", results: "results-title"}[step]);
+  const title = $({ledger: "ledger-title", settlements: "settlements-title", review: "review-title", results: "results-title"}[step]);
   window.scrollTo({top: 0, behavior: "smooth"});
   window.setTimeout(() => title.focus({preventScroll: true}), 30);
-  history.replaceState(null, "", step === "upload" ? "#new" : `#${step}`);
+  history.replaceState(null, "", step === "ledger" ? "#new" : `#${step}`);
 }
 
 function reviewFiles() {
@@ -1002,10 +1016,10 @@ function reviewFiles() {
       name: file.name,
       processor: detectProcessor(file.name),
       format,
-      batch_id: supported ? "Detected after upload" : "—",
-      settlement_date: "—",
-      currencies: ["—"],
-      lines: "—",
+      batch_id: supported ? "Detected after upload" : "-",
+      settlement_date: "-",
+      currencies: ["-"],
+      lines: "-",
       status: supported ? "ready" : "blocked",
       warnings: supported ? [] : ["Unsupported format"],
       index
@@ -1023,12 +1037,12 @@ function renderReview() {
   $("preflight-summary").style.background = blocked ? "var(--critical-soft)" : "var(--accent-soft)";
 
   const ledger = selectedLedger ? {
-    name: selectedLedger.name, processor: "Internal ledger", format: "csv", batch_id: "—",
-    settlement_date: "—", currencies: report.ledger_file.currencies,
+    name: selectedLedger.name, processor: "Internal ledger", format: "csv", batch_id: "-",
+    settlement_date: "-", currencies: report.ledger_file.currencies,
     lines: report.ledger_file.transactions, status: "ready"
   } : {
     name: report.ledger_file.name, processor: "Internal ledger", format: report.ledger_file.format,
-    batch_id: "—", settlement_date: "—", currencies: report.ledger_file.currencies,
+    batch_id: "-", settlement_date: "-", currencies: report.ledger_file.currencies,
     lines: report.ledger_file.transactions, status: report.ledger_file.status
   };
   const rows = [ledger, ...files];
@@ -1190,9 +1204,9 @@ function fullCsv() {
 
 function markdownReport() {
   const s = report.summary;
-  const totals = Object.entries(report.settled_totals).map(([currency, value]) => `| ${currency} | ${value.gross} | ${value.fees} | ${value.net} | ${report.exposure_by_currency[currency] || "—"} |`).join("\n");
-  const findings = report.discrepancies.map((finding, index) => `${index + 1}. **${humanize(finding.type)}** (${finding.severity}) — ${finding.description}\n   - Action: ${finding.recommended_action}\n   - Source: ${finding.source_file || "—"} ${finding.source_locator || ""}`).join("\n");
-  return `# Settlement reconciliation — ${report.as_of}\n\n${s.matched} reconciled · ${s.unmatched} unmatched · ${s.discrepancies} discrepancies\n\n## Totals by currency\n\n| Currency | Gross | Fees | Net | Money at risk |\n| --- | ---: | ---: | ---: | ---: |\n${totals}\n\n## Exceptions\n\n${findings}\n`;
+  const totals = Object.entries(report.settled_totals).map(([currency, value]) => `| ${currency} | ${value.gross} | ${value.fees} | ${value.net} | ${report.exposure_by_currency[currency] || "-"} |`).join("\n");
+  const findings = report.discrepancies.map((finding, index) => `${index + 1}. **${humanize(finding.type)}** (${finding.severity}) - ${finding.description}\n   - Action: ${finding.recommended_action}\n   - Source: ${finding.source_file || "-"} ${finding.source_locator || ""}`).join("\n");
+  return `# Settlement reconciliation - ${report.as_of}\n\n${s.matched} reconciled · ${s.unmatched} unmatched · ${s.discrepancies} discrepancies\n\n## Totals by currency\n\n| Currency | Gross | Fees | Net | Money at risk |\n| --- | ---: | ---: | ---: | ---: |\n${totals}\n\n## Exceptions\n\n${findings}\n`;
 }
 
 function toCsv(header, rows) {
@@ -1203,7 +1217,7 @@ function csvCell(value) {
   return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 function formatDetail(value) {
-  if (value === null || value === undefined || value === "") return "—";
+  if (value === null || value === undefined || value === "") return "-";
   return typeof value === "object" ? JSON.stringify(value) : String(value);
 }
 function formatBytes(bytes) {

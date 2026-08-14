@@ -1,0 +1,603 @@
+{
+  "generated_at": "2026-08-14T13:01:59+00:00",
+  "as_of": "2026-08-14",
+  "summary": {
+    "batches_processed": 9,
+    "settlement_lines": 212,
+    "ledger_transactions": 340,
+    "awaiting_settlement": 254,
+    "matched": 209,
+    "unmatched": 45,
+    "match_rate": "82.28%",
+    "discrepancies": 26,
+    "indicative_exposure_usd": "910.68"
+  },
+  "settled_totals": {
+    "BRL": {
+      "currency": "BRL",
+      "gross": "R$77,896.99 BRL",
+      "fees": "R$1,979.39 BRL",
+      "net": "R$75,895.40 BRL",
+      "lines": 58
+    },
+    "COP": {
+      "currency": "COP",
+      "gross": "COL$48,461,586 COP",
+      "fees": "COL$1,777,945 COP",
+      "net": "COL$46,683,641 COP",
+      "lines": 47
+    },
+    "MXN": {
+      "currency": "MXN",
+      "gross": "MX$263,534.93 MXN",
+      "fees": "MX$6,642.42 MXN",
+      "net": "MX$256,892.51 MXN",
+      "lines": 54
+    },
+    "USD": {
+      "currency": "USD",
+      "gross": "US$17,916.69 USD",
+      "fees": "US$402.35 USD",
+      "net": "US$17,514.34 USD",
+      "lines": 53
+    }
+  },
+  "settled_by_processor": {
+    "Adyen \u00b7 BRL": {
+      "currency": "BRL",
+      "gross": "R$24,735.32 BRL",
+      "fees": "R$192.11 BRL",
+      "net": "R$24,521.01 BRL",
+      "lines": 20
+    },
+    "Adyen \u00b7 MXN": {
+      "currency": "MXN",
+      "gross": "MX$88,870.09 MXN",
+      "fees": "MX$516.24 MXN",
+      "net": "MX$88,353.85 MXN",
+      "lines": 21
+    },
+    "Adyen \u00b7 USD": {
+      "currency": "USD",
+      "gross": "US$5,604.92 USD",
+      "fees": "US$31.51 USD",
+      "net": "US$5,573.41 USD",
+      "lines": 22
+    },
+    "PayU Latam \u00b7 COP": {
+      "currency": "COP",
+      "gross": "COL$19,264,387 COP",
+      "fees": "COL$597,521 COP",
+      "net": "COL$18,666,866 COP",
+      "lines": 21
+    },
+    "Stripe \u00b7 MXN": {
+      "currency": "MXN",
+      "gross": "MX$106,786.09 MXN",
+      "fees": "MX$3,827.57 MXN",
+      "net": "MX$102,958.52 MXN",
+      "lines": 20
+    },
+    "Stripe \u00b7 USD": {
+      "currency": "USD",
+      "gross": "US$7,246.30 USD",
+      "fees": "US$240.20 USD",
+      "net": "US$7,006.10 USD",
+      "lines": 30
+    },
+    "dLocal \u00b7 BRL": {
+      "currency": "BRL",
+      "gross": "R$53,161.67 BRL",
+      "fees": "R$1,787.28 BRL",
+      "net": "R$51,374.39 BRL",
+      "lines": 38
+    },
+    "dLocal \u00b7 COP": {
+      "currency": "COP",
+      "gross": "COL$29,197,199 COP",
+      "fees": "COL$1,180,424 COP",
+      "net": "COL$28,016,775 COP",
+      "lines": 26
+    },
+    "dLocal \u00b7 MXN": {
+      "currency": "MXN",
+      "gross": "MX$67,878.75 MXN",
+      "fees": "MX$2,298.61 MXN",
+      "net": "MX$65,580.14 MXN",
+      "lines": 13
+    },
+    "dLocal \u00b7 USD": {
+      "currency": "USD",
+      "gross": "US$5,065.47 USD",
+      "fees": "US$130.64 USD",
+      "net": "US$4,934.83 USD",
+      "lines": 1
+    }
+  },
+  "exposure_by_currency": {
+    "BRL": "R$-1,016.22 BRL",
+    "COP": "COL$-1,680,537 COP",
+    "MXN": "MX$5,555.89 MXN",
+    "USD": "US$2.04 USD"
+  },
+  "by_severity": {
+    "low": 8,
+    "high": 7,
+    "critical": 6,
+    "medium": 5
+  },
+  "by_type": {
+    "settlement_aging": 8,
+    "fee_error": 3,
+    "processor_mismatch": 3,
+    "missing_settlement": 3,
+    "amount_mismatch": 2,
+    "unknown_settlement": 2,
+    "batch_total_mismatch": 1,
+    "net_arithmetic_error": 1,
+    "status_conflict": 1,
+    "currency_mismatch": 1,
+    "duplicate_settlement": 1
+  },
+  "discrepancies": [
+    {
+      "id": "DUPL-8f5f090a",
+      "type": "duplicate_settlement",
+      "severity": "critical",
+      "processor": "Adyen",
+      "batch_id": "ADY-MXN-20260813",
+      "transaction_ids": [
+        "CT-202608-00302"
+      ],
+      "description": "CT-202608-00302 was settled 2 times, across batches ADY-MXN-20260813, po-MXN-20260813.",
+      "expected": "1 settlement",
+      "actual": "2 settlements",
+      "impact": {
+        "amount": "-7793.97",
+        "currency": "MXN"
+      },
+      "impact_display": "MX$-7,793.97 MXN",
+      "recommended_action": "Freeze the duplicated amount before month-end close. Duplicates are reversed later and will otherwise open a hole in the next payout."
+    },
+    {
+      "id": "UNKN-141cd736",
+      "type": "unknown_settlement",
+      "severity": "critical",
+      "processor": "Adyen",
+      "batch_id": "ADY-BRL-20260813",
+      "transaction_ids": [
+        "CT-RSV-9002"
+      ],
+      "description": "Adyen settled R$2,130.26 BRL for CT-RSV-9002, which does not exist in the internal ledger.",
+      "expected": "a matching internal transaction",
+      "actual": "no ledger record",
+      "impact": {
+        "amount": "-2130.26",
+        "currency": "BRL"
+      },
+      "impact_display": "R$-2,130.26 BRL",
+      "recommended_action": "Do not recognise as revenue yet. Confirm whether this is a reserve release, refund reversal or adjustment, and book it accordingly."
+    },
+    {
+      "id": "MISS-6f40b584",
+      "type": "missing_settlement",
+      "severity": "critical",
+      "processor": "dLocal",
+      "batch_id": null,
+      "transaction_ids": [
+        "CT-202608-00216"
+      ],
+      "description": "CT-202608-00216 was captured on 2026-08-05 for MX$6,646.73 MXN and has never been settled. Due 2026-08-10 under the 5-day dLocal SLA -- 4 days overdue.",
+      "expected": "settlement by 2026-08-10",
+      "actual": "never settled",
+      "impact": {
+        "amount": "6646.73",
+        "currency": "MXN"
+      },
+      "impact_display": "MX$6,646.73 MXN",
+      "recommended_action": "Raise a missing-settlement enquiry with dLocal quoting the capture date. If it was refunded processor-side, correct the internal status instead."
+    },
+    {
+      "id": "CURR-e96b7e1e",
+      "type": "currency_mismatch",
+      "severity": "critical",
+      "processor": "dLocal",
+      "batch_id": "DLO-MXN-20260813",
+      "transaction_ids": [
+        "CT-202608-00047"
+      ],
+      "description": "CT-202608-00047 was charged in MXN (MX$5,065.47 MXN) but settled in USD (US$5,065.47 USD).",
+      "expected": "MXN",
+      "actual": "USD",
+      "impact": {
+        "amount": "5065.47",
+        "currency": "MXN"
+      },
+      "impact_display": "MX$5,065.47 MXN",
+      "recommended_action": "Escalate today. The deposit will not clear against a MXN receivable; request reversal and re-settlement in the original currency."
+    },
+    {
+      "id": "UNKN-1216b83c",
+      "type": "unknown_settlement",
+      "severity": "critical",
+      "processor": "dLocal",
+      "batch_id": "DLO-COP-20260813",
+      "transaction_ids": [
+        "CT-ADJ-9001"
+      ],
+      "description": "dLocal settled COL$1,040,417 COP for CT-ADJ-9001, which does not exist in the internal ledger.",
+      "expected": "a matching internal transaction",
+      "actual": "no ledger record",
+      "impact": {
+        "amount": "-1040417",
+        "currency": "COP"
+      },
+      "impact_display": "COL$-1,040,417 COP",
+      "recommended_action": "Do not recognise as revenue yet. Confirm whether this is a reserve release, refund reversal or adjustment, and book it accordingly."
+    },
+    {
+      "id": "STAT-1717a39b",
+      "type": "status_conflict",
+      "severity": "critical",
+      "processor": "dLocal",
+      "batch_id": "DLO-BRL-20260813",
+      "transaction_ids": [
+        "CT-202608-00008"
+      ],
+      "description": "CT-202608-00008 is 'refunded' internally but was settled for R$829.90 BRL.",
+      "expected": "captured",
+      "actual": "refunded",
+      "impact": {
+        "amount": "-829.90",
+        "currency": "BRL"
+      },
+      "impact_display": "R$-829.90 BRL",
+      "recommended_action": "Quarantine the funds. Settled reversals are normally clawed back, so recognising this now creates a shortfall in a later payout."
+    },
+    {
+      "id": "MISS-667d6dc1",
+      "type": "missing_settlement",
+      "severity": "high",
+      "processor": "dLocal",
+      "batch_id": null,
+      "transaction_ids": [
+        "CT-202608-00096"
+      ],
+      "description": "CT-202608-00096 was captured on 2026-07-21 for R$1,206.73 BRL and has never been settled. Due 2026-07-26 under the 5-day dLocal SLA -- 19 days overdue.",
+      "expected": "settlement by 2026-07-26",
+      "actual": "never settled",
+      "impact": {
+        "amount": "1206.73",
+        "currency": "BRL"
+      },
+      "impact_display": "R$1,206.73 BRL",
+      "recommended_action": "Raise a missing-settlement enquiry with dLocal quoting the capture date. If it was refunded processor-side, correct the internal status instead."
+    },
+    {
+      "id": "BATC-c5ffaa3f",
+      "type": "batch_total_mismatch",
+      "severity": "high",
+      "processor": "PayU Latam",
+      "batch_id": "PAYU-COP-20260811",
+      "transaction_ids": [],
+      "description": "Batch PAYU-COP-20260811 claims net of COL$19,413,541 COP, but its 21 lines sum to COL$18,666,866 COP.",
+      "expected": "COL$18,666,866 COP",
+      "actual": "COL$19,413,541 COP",
+      "impact": {
+        "amount": "-746675",
+        "currency": "COP"
+      },
+      "impact_display": "COL$-746,675 COP",
+      "recommended_action": "Do not post this payout until the processor reissues the file -- header and detail disagree, so one of them is wrong."
+    },
+    {
+      "id": "MISS-86040d33",
+      "type": "missing_settlement",
+      "severity": "high",
+      "processor": "dLocal",
+      "batch_id": null,
+      "transaction_ids": [
+        "CT-202608-00270"
+      ],
+      "description": "CT-202608-00270 was captured on 2026-07-24 for MX$1,830.53 MXN and has never been settled. Due 2026-07-29 under the 5-day dLocal SLA -- 16 days overdue.",
+      "expected": "settlement by 2026-07-29",
+      "actual": "never settled",
+      "impact": {
+        "amount": "1830.53",
+        "currency": "MXN"
+      },
+      "impact_display": "MX$1,830.53 MXN",
+      "recommended_action": "Raise a missing-settlement enquiry with dLocal quoting the capture date. If it was refunded processor-side, correct the internal status instead."
+    },
+    {
+      "id": "NET_-86c9bfe2",
+      "type": "net_arithmetic_error",
+      "severity": "high",
+      "processor": "Adyen",
+      "batch_id": "ADY-BRL-20260813",
+      "transaction_ids": [
+        "CT-202608-00226"
+      ],
+      "description": "Settlement line does not add up: gross R$319.73 BRL minus fee R$2.52 BRL is R$317.21 BRL, but the report states net R$295.01 BRL.",
+      "expected": "R$317.21 BRL",
+      "actual": "R$295.01 BRL",
+      "impact": {
+        "amount": "22.20",
+        "currency": "BRL"
+      },
+      "impact_display": "R$22.20 BRL",
+      "recommended_action": "Hold the line and request a corrected settlement advice -- the file is internally inconsistent, so neither figure can be trusted."
+    },
+    {
+      "id": "PROC-e94bedd1",
+      "type": "processor_mismatch",
+      "severity": "high",
+      "processor": "dLocal",
+      "batch_id": "DLO-BRL-20260813",
+      "transaction_ids": [
+        "CT-202608-00008"
+      ],
+      "description": "dLocal settled CT-202608-00008, but the ledger routed it through Adyen.",
+      "expected": "Adyen",
+      "actual": "dLocal",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Check for a routing failover or a mis-keyed merchant reference before accepting the payout, and confirm the other processor is not also settling it."
+    },
+    {
+      "id": "PROC-3b6e640f",
+      "type": "processor_mismatch",
+      "severity": "high",
+      "processor": "dLocal",
+      "batch_id": "DLO-COP-20260813",
+      "transaction_ids": [
+        "CT-202608-00004"
+      ],
+      "description": "dLocal settled CT-202608-00004, but the ledger routed it through PayU Latam.",
+      "expected": "PayU Latam",
+      "actual": "dLocal",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Check for a routing failover or a mis-keyed merchant reference before accepting the payout, and confirm the other processor is not also settling it."
+    },
+    {
+      "id": "PROC-a53354ff",
+      "type": "processor_mismatch",
+      "severity": "high",
+      "processor": "Stripe",
+      "batch_id": "po-MXN-20260813",
+      "transaction_ids": [
+        "CT-202608-00302"
+      ],
+      "description": "Stripe settled CT-202608-00302, but the ledger routed it through Adyen.",
+      "expected": "Adyen",
+      "actual": "Stripe",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Check for a routing failover or a mis-keyed merchant reference before accepting the payout, and confirm the other processor is not also settling it."
+    },
+    {
+      "id": "AMOU-884e40fc",
+      "type": "amount_mismatch",
+      "severity": "medium",
+      "processor": "Adyen",
+      "batch_id": "ADY-BRL-20260813",
+      "transaction_ids": [
+        "CT-202608-00264"
+      ],
+      "description": "CT-202608-00264 was charged R$1,401.27 BRL but settled with gross R$700.64 BRL -- short by R$700.63 BRL.",
+      "expected": "R$1,401.27 BRL",
+      "actual": "R$700.64 BRL",
+      "impact": {
+        "amount": "700.63",
+        "currency": "BRL"
+      },
+      "impact_display": "R$700.63 BRL",
+      "recommended_action": "Check for a partial refund or partial capture recorded only on the processor side; if there is none, open a settlement dispute."
+    },
+    {
+      "id": "FEE_-a1cdf1cb",
+      "type": "fee_error",
+      "severity": "medium",
+      "processor": "dLocal",
+      "batch_id": "DLO-COP-20260813",
+      "transaction_ids": [
+        "CT-202608-00243"
+      ],
+      "description": "Fee on CT-202608-00243 (credit_card) was COL$173,152 COP, but the contracted rate implies COL$66,597 COP -- overcharged by COL$106,555 COP.",
+      "expected": "COL$66,597 COP",
+      "actual": "COL$173,152 COP",
+      "impact": {
+        "amount": "106555",
+        "currency": "COP"
+      },
+      "impact_display": "COL$106,555 COP",
+      "recommended_action": "Reclaim the difference and re-check the credit_card rate configured for dLocal. A systematic error here repeats on every transaction."
+    },
+    {
+      "id": "FEE_-e7d2de32",
+      "type": "fee_error",
+      "severity": "medium",
+      "processor": "Stripe",
+      "batch_id": "po-MXN-20260813",
+      "transaction_ids": [
+        "CT-202608-00302"
+      ],
+      "description": "Fee on CT-202608-00302 (debit_card) was MX$37.24 MXN, but the contracted rate implies MX$230.11 MXN -- undercharged by MX$192.87 MXN.",
+      "expected": "MX$230.11 MXN",
+      "actual": "MX$37.24 MXN",
+      "impact": {
+        "amount": "-192.87",
+        "currency": "MXN"
+      },
+      "impact_display": "MX$-192.87 MXN",
+      "recommended_action": "Reclaim the difference and re-check the debit_card rate configured for Stripe. A systematic error here repeats on every transaction."
+    },
+    {
+      "id": "FEE_-9f2f0aa8",
+      "type": "fee_error",
+      "severity": "medium",
+      "processor": "Adyen",
+      "batch_id": "ADY-BRL-20260813",
+      "transaction_ids": [
+        "CT-202608-00046"
+      ],
+      "description": "Fee on CT-202608-00046 (pix) was R$30.36 BRL, but the contracted rate implies R$15.98 BRL -- overcharged by R$14.38 BRL.",
+      "expected": "R$15.98 BRL",
+      "actual": "R$30.36 BRL",
+      "impact": {
+        "amount": "14.38",
+        "currency": "BRL"
+      },
+      "impact_display": "R$14.38 BRL",
+      "recommended_action": "Reclaim the difference and re-check the pix rate configured for Adyen. A systematic error here repeats on every transaction."
+    },
+    {
+      "id": "AMOU-c8253abf",
+      "type": "amount_mismatch",
+      "severity": "medium",
+      "processor": "Stripe",
+      "batch_id": "po-USD-20260813",
+      "transaction_ids": [
+        "CT-202608-00090"
+      ],
+      "description": "CT-202608-00090 was charged US$11.32 USD but settled with gross US$9.28 USD -- short by US$2.04 USD.",
+      "expected": "US$11.32 USD",
+      "actual": "US$9.28 USD",
+      "impact": {
+        "amount": "2.04",
+        "currency": "USD"
+      },
+      "impact_display": "US$2.04 USD",
+      "recommended_action": "Check for a partial refund or partial capture recorded only on the processor side; if there is none, open a settlement dispute."
+    },
+    {
+      "id": "SETT-586eb6d6",
+      "type": "settlement_aging",
+      "severity": "low",
+      "processor": "Adyen",
+      "batch_id": null,
+      "transaction_ids": [
+        "CT-202608-00006"
+      ],
+      "description": "CT-202608-00006 (US$41.42 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14.",
+      "expected": "settlement by 2026-08-14",
+      "actual": "pending",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Monitor; escalate if the next payout omits it."
+    },
+    {
+      "id": "SETT-5e5d58bb",
+      "type": "settlement_aging",
+      "severity": "low",
+      "processor": "Adyen",
+      "batch_id": null,
+      "transaction_ids": [
+        "CT-202608-00084"
+      ],
+      "description": "CT-202608-00084 (US$385.92 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14.",
+      "expected": "settlement by 2026-08-14",
+      "actual": "pending",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Monitor; escalate if the next payout omits it."
+    },
+    {
+      "id": "SETT-07017cd1",
+      "type": "settlement_aging",
+      "severity": "low",
+      "processor": "dLocal",
+      "batch_id": null,
+      "transaction_ids": [
+        "CT-202608-00097"
+      ],
+      "description": "CT-202608-00097 (COL$997,848 COP) has reached the edge of dLocal's 5-day SLA, due 2026-08-14.",
+      "expected": "settlement by 2026-08-14",
+      "actual": "pending",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Monitor; escalate if the next payout omits it."
+    },
+    {
+      "id": "SETT-63766b15",
+      "type": "settlement_aging",
+      "severity": "low",
+      "processor": "Adyen",
+      "batch_id": null,
+      "transaction_ids": [
+        "CT-202608-00109"
+      ],
+      "description": "CT-202608-00109 (US$368.82 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14.",
+      "expected": "settlement by 2026-08-14",
+      "actual": "pending",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Monitor; escalate if the next payout omits it."
+    },
+    {
+      "id": "SETT-638a8c5d",
+      "type": "settlement_aging",
+      "severity": "low",
+      "processor": "Adyen",
+      "batch_id": null,
+      "transaction_ids": [
+        "CT-202608-00136"
+      ],
+      "description": "CT-202608-00136 (R$48.44 BRL) has reached the edge of Adyen's 2-day SLA, due 2026-08-14.",
+      "expected": "settlement by 2026-08-14",
+      "actual": "pending",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Monitor; escalate if the next payout omits it."
+    },
+    {
+      "id": "SETT-0d7adbad",
+      "type": "settlement_aging",
+      "severity": "low",
+      "processor": "Adyen",
+      "batch_id": null,
+      "transaction_ids": [
+        "CT-202608-00142"
+      ],
+      "description": "CT-202608-00142 (R$979.74 BRL) has reached the edge of Adyen's 2-day SLA, due 2026-08-14.",
+      "expected": "settlement by 2026-08-14",
+      "actual": "pending",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Monitor; escalate if the next payout omits it."
+    },
+    {
+      "id": "SETT-b7fcc7ee",
+      "type": "settlement_aging",
+      "severity": "low",
+      "processor": "Adyen",
+      "batch_id": null,
+      "transaction_ids": [
+        "CT-202608-00165"
+      ],
+      "description": "CT-202608-00165 (US$96.51 USD) has reached the edge of Adyen's 2-day SLA, due 2026-08-14.",
+      "expected": "settlement by 2026-08-14",
+      "actual": "pending",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Monitor; escalate if the next payout omits it."
+    },
+    {
+      "id": "SETT-9ddc112b",
+      "type": "settlement_aging",
+      "severity": "low",
+      "processor": "Stripe",
+      "batch_id": null,
+      "transaction_ids": [
+        "CT-202608-00333"
+      ],
+      "description": "CT-202608-00333 (US$351.45 USD) has reached the edge of Stripe's 3-day SLA, due 2026-08-14.",
+      "expected": "settlement by 2026-08-14",
+      "actual": "pending",
+      "impact": null,
+      "impact_display": null,
+      "recommended_action": "Monitor; escalate if the next payout omits it."
+    }
+  ]
+}

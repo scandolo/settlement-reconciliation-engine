@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReconciliationReport batchId="PAYU-COP-20260811" merchant="CafeTerra" settlementDate="2026-08-11" currency="COP">
+  <Transactions>
+    <Transaction payuOrderId="PU000000000" reference="CT-202608-00227" method="credit_card" currency="COP" gross="991949" fee="35519" net="956430"/>
+    <Transaction payuOrderId="PU000000001" reference="CT-202608-00078" method="pse" currency="COP" gross="1615744" fee="49211" net="1566533"/>
+    <Transaction payuOrderId="PU000000002" reference="CT-202608-00148" method="credit_card" currency="COP" gross="139387" fee="5765" net="133622"/>
+    <Transaction payuOrderId="PU000000003" reference="CT-202608-00115" method="pse" currency="COP" gross="1553946" fee="47363" net="1506583"/>
+    <Transaction payuOrderId="PU000000004" reference="CT-202608-00282" method="pse" currency="COP" gross="38241" fee="2043" net="36198"/>
+    <Transaction payuOrderId="PU000000005" reference="CT-202608-00314" method="pse" currency="COP" gross="626556" fee="19634" net="606922"/>
+    <Transaction payuOrderId="PU000000006" reference="CT-202608-00151" method="pse" currency="COP" gross="225245" fee="7635" net="217610"/>
+    <Transaction payuOrderId="PU000000007" reference="CT-202608-00331" method="pse" currency="COP" gross="42320" fee="2165" net="40155"/>
+    <Transaction payuOrderId="PU000000008" reference="CT-202608-00043" method="credit_card" currency="COP" gross="826013" fee="29728" net="796285"/>
+    <Transaction payuOrderId="PU000000009" reference="CT-202608-00209" method="cash" currency="COP" gross="716151" fee="19404" net="696747"/>
+    <Transaction payuOrderId="PU000000010" reference="CT-202608-00052" method="credit_card" currency="COP" gross="1064733" fee="38059" net="1026674"/>
+    <Transaction payuOrderId="PU000000011" reference="CT-202608-00201" method="cash" currency="COP" gross="911867" fee="24297" net="887570"/>
+    <Transaction payuOrderId="PU000000012" reference="CT-202608-00041" method="cash" currency="COP" gross="575681" fee="15892" net="559789"/>
+    <Transaction payuOrderId="PU000000013" reference="CT-202608-00117" method="credit_card" currency="COP" gross="1611178" fee="57130" net="1554048"/>
+    <Transaction payuOrderId="PU000000014" reference="CT-202608-00086" method="credit_card" currency="COP" gross="1409780" fee="50101" net="1359679"/>
+    <Transaction payuOrderId="PU000000015" reference="CT-202608-00186" method="cash" currency="COP" gross="1647278" fee="42682" net="1604596"/>
+    <Transaction payuOrderId="PU000000016" reference="CT-202608-00030" method="pse" currency="COP" gross="1269688" fee="38864" net="1230824"/>
+    <Transaction payuOrderId="PU000000017" reference="CT-202608-00093" method="cash" currency="COP" gross="693208" fee="18830" net="674378"/>
+    <Transaction payuOrderId="PU000000018" reference="CT-202608-00233" method="pse" currency="COP" gross="611894" fee="19196" net="592698"/>
+    <Transaction payuOrderId="PU000000019" reference="CT-202608-00312" method="cash" currency="COP" gross="1823183" fee="47080" net="1776103"/>
+    <Transaction payuOrderId="PU000000020" reference="CT-202608-00255" method="pse" currency="COP" gross="870345" fee="26923" net="843422"/>
+  </Transactions>
+  <Totals gross="19264387" fees="597521" net="19413541"/>
+</ReconciliationReport>

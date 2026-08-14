@@ -1,0 +1,16 @@
+[project]
+name = "settlement-reconciler"
+version = "1.0.0"
+description = "Multi-processor, multi-currency settlement reconciliation engine"
+requires-python = ">=3.10"
+dependencies = []            # standard library only, by design
+
+[project.scripts]
+reconciler = "reconciler.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

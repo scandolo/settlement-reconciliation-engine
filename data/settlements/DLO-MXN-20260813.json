@@ -1,0 +1,155 @@
+{
+  "settlement": {
+    "settlement_id": "DLO-MXN-20260813",
+    "settlement_date": "2026-08-13T00:00:00Z",
+    "settlement_currency": "MXN",
+    "merchant": "CafeTerra",
+    "payments": [
+      {
+        "payment_id": "D-00000000",
+        "order_id": "CT-202608-00011",
+        "payment_method": "spei",
+        "currency": "MXN",
+        "amount": "3245.68",
+        "commission": "72.37",
+        "tax": "12.77",
+        "net_amount": "3160.54"
+      },
+      {
+        "payment_id": "D-00000001",
+        "order_id": "CT-202608-00031",
+        "payment_method": "spei",
+        "currency": "MXN",
+        "amount": "3341.98",
+        "commission": "74.42",
+        "tax": "13.13",
+        "net_amount": "3254.43"
+      },
+      {
+        "payment_id": "D-00000002",
+        "order_id": "CT-202608-00101",
+        "payment_method": "credit_card",
+        "currency": "MXN",
+        "amount": "3199.74",
+        "commission": "111.92",
+        "tax": "19.75",
+        "net_amount": "3068.07"
+      },
+      {
+        "payment_id": "D-00000003",
+        "order_id": "CT-202608-00284",
+        "payment_method": "credit_card",
+        "currency": "MXN",
+        "amount": "6940.98",
+        "commission": "238.81",
+        "tax": "42.14",
+        "net_amount": "6660.03"
+      },
+      {
+        "payment_id": "D-00000004",
+        "order_id": "CT-202608-00118",
+        "payment_method": "spei",
+        "currency": "MXN",
+        "amount": "8147.41",
+        "commission": "176.54",
+        "tax": "31.15",
+        "net_amount": "7939.72"
+      },
+      {
+        "payment_id": "D-00000005",
+        "order_id": "CT-202608-00047",
+        "payment_method": "spei",
+        "currency": "USD",
+        "amount": "5065.47",
+        "commission": "111.04",
+        "tax": "19.60",
+        "net_amount": "4934.83"
+      },
+      {
+        "payment_id": "D-00000006",
+        "order_id": "CT-202608-00002",
+        "payment_method": "spei",
+        "currency": "MXN",
+        "amount": "2795.60",
+        "commission": "62.81",
+        "tax": "11.08",
+        "net_amount": "2721.71"
+      },
+      {
+        "payment_id": "D-00000007",
+        "order_id": "CT-202608-00067",
+        "payment_method": "credit_card",
+        "currency": "MXN",
+        "amount": "7548.79",
+        "commission": "259.42",
+        "tax": "45.78",
+        "net_amount": "7243.59"
+      },
+      {
+        "payment_id": "D-00000008",
+        "order_id": "CT-202608-00105",
+        "payment_method": "credit_card",
+        "currency": "MXN",
+        "amount": "6768.51",
+        "commission": "232.95",
+        "tax": "41.11",
+        "net_amount": "6494.45"
+      },
+      {
+        "payment_id": "D-00000009",
+        "order_id": "CT-202608-00178",
+        "payment_method": "credit_card",
+        "currency": "MXN",
+        "amount": "8019.09",
+        "commission": "275.37",
+        "tax": "48.59",
+        "net_amount": "7695.13"
+      },
+      {
+        "payment_id": "D-00000010",
+        "order_id": "CT-202608-00286",
+        "payment_method": "spei",
+        "currency": "MXN",
+        "amount": "4814.24",
+        "commission": "105.71",
+        "tax": "18.65",
+        "net_amount": "4689.88"
+      },
+      {
+        "payment_id": "D-00000011",
+        "order_id": "CT-202608-00217",
+        "payment_method": "credit_card",
+        "currency": "MXN",
+        "amount": "4410.44",
+        "commission": "152.98",
+        "tax": "27.00",
+        "net_amount": "4230.46"
+      },
+      {
+        "payment_id": "D-00000012",
+        "order_id": "CT-202608-00247",
+        "payment_method": "spei",
+        "currency": "MXN",
+        "amount": "7108.25",
+        "commission": "154.45",
+        "tax": "27.26",
+        "net_amount": "6926.54"
+      },
+      {
+        "payment_id": "D-00000013",
+        "order_id": "CT-202608-00208",
+        "payment_method": "spei",
+        "currency": "MXN",
+        "amount": "1538.04",
+        "commission": "36.08",
+        "tax": "6.37",
+        "net_amount": "1495.59"
+      }
+    ],
+    "totals": {
+      "gross_amount": "72944.22",
+      "total_fees": "2429.25",
+      "net_amount": "70514.97"
+    }
+  }
+}

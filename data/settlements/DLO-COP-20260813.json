@@ -1,0 +1,275 @@
+{
+  "settlement": {
+    "settlement_id": "DLO-COP-20260813",
+    "settlement_date": "2026-08-13T00:00:00Z",
+    "settlement_currency": "COP",
+    "merchant": "CafeTerra",
+    "payments": [
+      {
+        "payment_id": "D-00000000",
+        "order_id": "CT-202608-00245",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "1084905",
+        "commission": "37815",
+        "tax": "6673",
+        "net_amount": "1040417"
+      },
+      {
+        "payment_id": "D-00000001",
+        "order_id": "CT-202608-00181",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "914269",
+        "commission": "32027",
+        "tax": "5652",
+        "net_amount": "876590"
+      },
+      {
+        "payment_id": "D-00000002",
+        "order_id": "CT-202608-00075",
+        "payment_method": "pse",
+        "currency": "COP",
+        "amount": "784261",
+        "commission": "20697",
+        "tax": "3652",
+        "net_amount": "759912"
+      },
+      {
+        "payment_id": "D-00000003",
+        "order_id": "CT-202608-00143",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "1936190",
+        "commission": "66686",
+        "tax": "11768",
+        "net_amount": "1857736"
+      },
+      {
+        "payment_id": "D-00000004",
+        "order_id": "CT-202608-00243",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "1639026",
+        "commission": "147179",
+        "tax": "25973",
+        "net_amount": "1465874"
+      },
+      {
+        "payment_id": "D-00000005",
+        "order_id": "CT-202608-00192",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "513382",
+        "commission": "18431",
+        "tax": "3253",
+        "net_amount": "491698"
+      },
+      {
+        "payment_id": "D-00000006",
+        "order_id": "CT-202608-00053",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "324296",
+        "commission": "12018",
+        "tax": "2121",
+        "net_amount": "310157"
+      },
+      {
+        "payment_id": "D-00000007",
+        "order_id": "CT-202608-00153",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "1977600",
+        "commission": "68090",
+        "tax": "12016",
+        "net_amount": "1897494"
+      },
+      {
+        "payment_id": "D-00000008",
+        "order_id": "CT-202608-00174",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "1163029",
+        "commission": "40464",
+        "tax": "7141",
+        "net_amount": "1115424"
+      },
+      {
+        "payment_id": "D-00000009",
+        "order_id": "CT-202608-00221",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "1795914",
+        "commission": "61928",
+        "tax": "10929",
+        "net_amount": "1723057"
+      },
+      {
+        "payment_id": "D-00000010",
+        "order_id": "CT-202608-00141",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "178515",
+        "commission": "7075",
+        "tax": "1248",
+        "net_amount": "170192"
+      },
+      {
+        "payment_id": "D-00000011",
+        "order_id": "CT-202608-00152",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "310076",
+        "commission": "11536",
+        "tax": "2036",
+        "net_amount": "296504"
+      },
+      {
+        "payment_id": "D-00000012",
+        "order_id": "CT-202608-00294",
+        "payment_method": "pse",
+        "currency": "COP",
+        "amount": "1360467",
+        "commission": "35341",
+        "tax": "6237",
+        "net_amount": "1318889"
+      },
+      {
+        "payment_id": "D-00000013",
+        "order_id": "CT-202608-00246",
+        "payment_method": "pse",
+        "currency": "COP",
+        "amount": "1658166",
+        "commission": "42907",
+        "tax": "7572",
+        "net_amount": "1607687"
+      },
+      {
+        "payment_id": "D-00000014",
+        "order_id": "CT-202608-00310",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "1485937",
+        "commission": "51416",
+        "tax": "9073",
+        "net_amount": "1425448"
+      },
+      {
+        "payment_id": "D-00000015",
+        "order_id": "CT-202608-00253",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "827836",
+        "commission": "29096",
+        "tax": "5135",
+        "net_amount": "793605"
+      },
+      {
+        "payment_id": "D-00000016",
+        "order_id": "CT-202608-00336",
+        "payment_method": "pse",
+        "currency": "COP",
+        "amount": "947398",
+        "commission": "24843",
+        "tax": "4384",
+        "net_amount": "918171"
+      },
+      {
+        "payment_id": "D-00000017",
+        "order_id": "CT-202608-00303",
+        "payment_method": "pse",
+        "currency": "COP",
+        "amount": "1411637",
+        "commission": "36642",
+        "tax": "6466",
+        "net_amount": "1368529"
+      },
+      {
+        "payment_id": "D-00000018",
+        "order_id": "CT-202608-00050",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "436499",
+        "commission": "15824",
+        "tax": "2792",
+        "net_amount": "417883"
+      },
+      {
+        "payment_id": "D-00000019",
+        "order_id": "CT-202608-00098",
+        "payment_method": "pse",
+        "currency": "COP",
+        "amount": "566113",
+        "commission": "15153",
+        "tax": "2674",
+        "net_amount": "548286"
+      },
+      {
+        "payment_id": "D-00000020",
+        "order_id": "CT-202608-00179",
+        "payment_method": "pse",
+        "currency": "COP",
+        "amount": "1191780",
+        "commission": "31054",
+        "tax": "5480",
+        "net_amount": "1155246"
+      },
+      {
+        "payment_id": "D-00000021",
+        "order_id": "CT-202608-00311",
+        "payment_method": "pse",
+        "currency": "COP",
+        "amount": "929558",
+        "commission": "24390",
+        "tax": "4304",
+        "net_amount": "900864"
+      },
+      {
+        "payment_id": "D-00000022",
+        "order_id": "CT-202608-00155",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "1594973",
+        "commission": "55113",
+        "tax": "9726",
+        "net_amount": "1530134"
+      },
+      {
+        "payment_id": "D-00000023",
+        "order_id": "CT-202608-00326",
+        "payment_method": "pse",
+        "currency": "COP",
+        "amount": "1678366",
+        "commission": "43421",
+        "tax": "7662",
+        "net_amount": "1627283"
+      },
+      {
+        "payment_id": "D-00000024",
+        "order_id": "CT-ADJ-9001",
+        "payment_method": "credit_card",
+        "currency": "COP",
+        "amount": "1084905",
+        "commission": "37815",
+        "tax": "6673",
+        "net_amount": "1040417"
+      },
+      {
+        "payment_id": "D-00000025",
+        "order_id": "CT-202608-00004",
+        "payment_method": "pse",
+        "currency": "COP",
+        "amount": "1402101",
+        "commission": "36400",
+        "tax": "6423",
+        "net_amount": "1359278"
+      }
+    ],
+    "totals": {
+      "gross_amount": "29197199",
+      "total_fees": "1180424",
+      "net_amount": "28016775"
+    }
+  }
+}

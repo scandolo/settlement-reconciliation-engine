@@ -1,0 +1,395 @@
+{
+  "settlement": {
+    "settlement_id": "DLO-BRL-20260813",
+    "settlement_date": "2026-08-13T00:00:00Z",
+    "settlement_currency": "BRL",
+    "merchant": "CafeTerra",
+    "payments": [
+      {
+        "payment_id": "D-00000000",
+        "order_id": "CT-202608-00157",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1763.80",
+        "commission": "60.25",
+        "tax": "10.63",
+        "net_amount": "1692.92"
+      },
+      {
+        "payment_id": "D-00000001",
+        "order_id": "CT-202608-00299",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "2050.48",
+        "commission": "34.68",
+        "tax": "6.12",
+        "net_amount": "2009.68"
+      },
+      {
+        "payment_id": "D-00000002",
+        "order_id": "CT-202608-00035",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1584.05",
+        "commission": "54.14",
+        "tax": "9.56",
+        "net_amount": "1520.35"
+      },
+      {
+        "payment_id": "D-00000003",
+        "order_id": "CT-202608-00051",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "951.44",
+        "commission": "16.09",
+        "tax": "2.84",
+        "net_amount": "932.51"
+      },
+      {
+        "payment_id": "D-00000004",
+        "order_id": "CT-202608-00261",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1841.04",
+        "commission": "62.87",
+        "tax": "11.09",
+        "net_amount": "1767.08"
+      },
+      {
+        "payment_id": "D-00000005",
+        "order_id": "CT-202608-00262",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "2139.77",
+        "commission": "36.19",
+        "tax": "6.39",
+        "net_amount": "2097.19"
+      },
+      {
+        "payment_id": "D-00000006",
+        "order_id": "CT-202608-00295",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "364.70",
+        "commission": "12.79",
+        "tax": "2.26",
+        "net_amount": "349.65"
+      },
+      {
+        "payment_id": "D-00000007",
+        "order_id": "CT-202608-00000",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "2234.23",
+        "commission": "76.20",
+        "tax": "13.45",
+        "net_amount": "2144.58"
+      },
+      {
+        "payment_id": "D-00000008",
+        "order_id": "CT-202608-00034",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "2412.02",
+        "commission": "82.23",
+        "tax": "14.51",
+        "net_amount": "2315.28"
+      },
+      {
+        "payment_id": "D-00000009",
+        "order_id": "CT-202608-00121",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "1436.18",
+        "commission": "24.29",
+        "tax": "4.29",
+        "net_amount": "1407.60"
+      },
+      {
+        "payment_id": "D-00000010",
+        "order_id": "CT-202608-00258",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1780.69",
+        "commission": "60.82",
+        "tax": "10.73",
+        "net_amount": "1709.14"
+      },
+      {
+        "payment_id": "D-00000011",
+        "order_id": "CT-202608-00298",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "280.44",
+        "commission": "4.74",
+        "tax": "0.84",
+        "net_amount": "274.86"
+      },
+      {
+        "payment_id": "D-00000012",
+        "order_id": "CT-202608-00110",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "665.03",
+        "commission": "11.25",
+        "tax": "1.98",
+        "net_amount": "651.80"
+      },
+      {
+        "payment_id": "D-00000013",
+        "order_id": "CT-202608-00120",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "762.10",
+        "commission": "12.89",
+        "tax": "2.28",
+        "net_amount": "746.93"
+      },
+      {
+        "payment_id": "D-00000014",
+        "order_id": "CT-202608-00199",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1258.15",
+        "commission": "43.09",
+        "tax": "7.61",
+        "net_amount": "1207.45"
+      },
+      {
+        "payment_id": "D-00000015",
+        "order_id": "CT-202608-00013",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "1890.38",
+        "commission": "31.98",
+        "tax": "5.64",
+        "net_amount": "1852.76"
+      },
+      {
+        "payment_id": "D-00000016",
+        "order_id": "CT-202608-00083",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "2260.27",
+        "commission": "77.08",
+        "tax": "13.60",
+        "net_amount": "2169.59"
+      },
+      {
+        "payment_id": "D-00000017",
+        "order_id": "CT-202608-00150",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "2290.71",
+        "commission": "78.11",
+        "tax": "13.79",
+        "net_amount": "2198.81"
+      },
+      {
+        "payment_id": "D-00000018",
+        "order_id": "CT-202608-00307",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "1145.87",
+        "commission": "19.38",
+        "tax": "3.42",
+        "net_amount": "1123.07"
+      },
+      {
+        "payment_id": "D-00000019",
+        "order_id": "CT-202608-00076",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "906.90",
+        "commission": "15.34",
+        "tax": "2.71",
+        "net_amount": "888.85"
+      },
+      {
+        "payment_id": "D-00000020",
+        "order_id": "CT-202608-00085",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "1960.78",
+        "commission": "33.17",
+        "tax": "5.85",
+        "net_amount": "1921.76"
+      },
+      {
+        "payment_id": "D-00000021",
+        "order_id": "CT-202608-00107",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1559.54",
+        "commission": "53.32",
+        "tax": "9.41",
+        "net_amount": "1496.81"
+      },
+      {
+        "payment_id": "D-00000022",
+        "order_id": "CT-202608-00236",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "2349.44",
+        "commission": "80.10",
+        "tax": "14.14",
+        "net_amount": "2255.20"
+      },
+      {
+        "payment_id": "D-00000023",
+        "order_id": "CT-202608-00252",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "993.07",
+        "commission": "34.10",
+        "tax": "6.02",
+        "net_amount": "952.95"
+      },
+      {
+        "payment_id": "D-00000024",
+        "order_id": "CT-202608-00134",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "672.45",
+        "commission": "23.23",
+        "tax": "4.10",
+        "net_amount": "645.12"
+      },
+      {
+        "payment_id": "D-00000025",
+        "order_id": "CT-202608-00309",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1039.97",
+        "commission": "35.69",
+        "tax": "6.30",
+        "net_amount": "997.98"
+      },
+      {
+        "payment_id": "D-00000026",
+        "order_id": "CT-202608-00317",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1342.86",
+        "commission": "45.97",
+        "tax": "8.11",
+        "net_amount": "1288.78"
+      },
+      {
+        "payment_id": "D-00000027",
+        "order_id": "CT-202608-00145",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "2452.47",
+        "commission": "41.48",
+        "tax": "7.32",
+        "net_amount": "2403.67"
+      },
+      {
+        "payment_id": "D-00000028",
+        "order_id": "CT-202608-00164",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1480.43",
+        "commission": "50.63",
+        "tax": "8.94",
+        "net_amount": "1420.86"
+      },
+      {
+        "payment_id": "D-00000029",
+        "order_id": "CT-202608-00300",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "2336.75",
+        "commission": "79.68",
+        "tax": "14.06",
+        "net_amount": "2243.01"
+      },
+      {
+        "payment_id": "D-00000030",
+        "order_id": "CT-202608-00324",
+        "payment_method": "pix",
+        "currency": "BRL",
+        "amount": "675.47",
+        "commission": "11.42",
+        "tax": "2.02",
+        "net_amount": "662.03"
+      },
+      {
+        "payment_id": "D-00000031",
+        "order_id": "CT-202608-00229",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1742.65",
+        "commission": "59.53",
+        "tax": "10.50",
+        "net_amount": "1672.62"
+      },
+      {
+        "payment_id": "D-00000032",
+        "order_id": "CT-202608-00210",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "392.27",
+        "commission": "13.73",
+        "tax": "2.42",
+        "net_amount": "376.12"
+      },
+      {
+        "payment_id": "D-00000033",
+        "order_id": "CT-202608-00263",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1142.44",
+        "commission": "39.17",
+        "tax": "6.91",
+        "net_amount": "1096.36"
+      },
+      {
+        "payment_id": "D-00000034",
+        "order_id": "CT-202608-00316",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "52.66",
+        "commission": "2.21",
+        "tax": "0.39",
+        "net_amount": "50.06"
+      },
+      {
+        "payment_id": "D-00000035",
+        "order_id": "CT-202608-00238",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "491.56",
+        "commission": "17.09",
+        "tax": "3.02",
+        "net_amount": "471.45"
+      },
+      {
+        "payment_id": "D-00000036",
+        "order_id": "CT-202608-00020",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "1593.70",
+        "commission": "54.48",
+        "tax": "9.61",
+        "net_amount": "1529.61"
+      },
+      {
+        "payment_id": "D-00000037",
+        "order_id": "CT-202608-00008",
+        "payment_method": "credit_card",
+        "currency": "BRL",
+        "amount": "864.91",
+        "commission": "29.76",
+        "tax": "5.25",
+        "net_amount": "829.90"
+      }
+    ],
+    "totals": {
+      "gross_amount": "53161.67",
+      "total_fees": "1787.28",
+      "net_amount": "51374.39"
+    }
+  }
+}

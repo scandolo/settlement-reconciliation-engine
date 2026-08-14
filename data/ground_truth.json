@@ -1,0 +1,97 @@
+{
+  "as_of": "2026-08-14",
+  "transactions": 340,
+  "settlement_files": 9,
+  "injected_defects": [
+    {
+      "type": "missing_settlement",
+      "transaction_id": "CT-202608-00216",
+      "batch_id": "DLO-MXN-20260813",
+      "note": "captured transaction omitted from the payout"
+    },
+    {
+      "type": "missing_settlement",
+      "transaction_id": "CT-202608-00096",
+      "batch_id": "DLO-BRL-20260813",
+      "note": "captured transaction omitted from the payout"
+    },
+    {
+      "type": "missing_settlement",
+      "transaction_id": "CT-202608-00270",
+      "batch_id": "DLO-MXN-20260813",
+      "note": "captured transaction omitted from the payout"
+    },
+    {
+      "type": "amount_mismatch",
+      "transaction_id": "CT-202608-00264",
+      "batch_id": "ADY-BRL-20260813",
+      "note": "settled at 50% of the captured amount"
+    },
+    {
+      "type": "amount_mismatch",
+      "transaction_id": "CT-202608-00090",
+      "batch_id": "po-USD-20260813",
+      "note": "settled at 82% of the captured amount"
+    },
+    {
+      "type": "unknown_settlement",
+      "transaction_id": "CT-ADJ-9001",
+      "batch_id": "DLO-COP-20260813",
+      "note": "settlement line with no ledger counterpart"
+    },
+    {
+      "type": "unknown_settlement",
+      "transaction_id": "CT-RSV-9002",
+      "batch_id": "ADY-BRL-20260813",
+      "note": "settlement line with no ledger counterpart"
+    },
+    {
+      "type": "fee_error",
+      "transaction_id": "CT-202608-00046",
+      "batch_id": "ADY-BRL-20260813",
+      "note": "processor charged 1.9x the contracted rate"
+    },
+    {
+      "type": "fee_error",
+      "transaction_id": "CT-202608-00243",
+      "batch_id": "DLO-COP-20260813",
+      "note": "processor charged 2.6x the contracted rate"
+    },
+    {
+      "type": "currency_mismatch",
+      "transaction_id": "CT-202608-00047",
+      "batch_id": "DLO-MXN-20260813",
+      "note": "MXN transaction settled in USD"
+    },
+    {
+      "type": "duplicate_settlement",
+      "transaction_id": "CT-202608-00302",
+      "batch_id": "po-MXN-20260813",
+      "note": "same transaction present in two payouts"
+    },
+    {
+      "type": "status_conflict",
+      "transaction_id": "CT-202608-00008",
+      "batch_id": "DLO-BRL-20260813",
+      "note": "refunded transaction included in a payout"
+    },
+    {
+      "type": "net_arithmetic_error",
+      "transaction_id": "CT-202608-00226",
+      "batch_id": "ADY-BRL-20260813",
+      "note": "net does not equal gross minus fee"
+    },
+    {
+      "type": "batch_total_mismatch",
+      "transaction_id": null,
+      "batch_id": "PAYU-COP-20260811",
+      "note": "header net inflated by 4% against the detail"
+    },
+    {
+      "type": "processor_mismatch",
+      "transaction_id": "CT-202608-00004",
+      "batch_id": "DLO-COP-20260813",
+      "note": "PayU transaction settled by dLocal"
+    }
+  ]
+}

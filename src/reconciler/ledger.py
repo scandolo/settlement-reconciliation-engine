@@ -36,7 +36,7 @@ def load_transactions(path: Path) -> list[Transaction]:
 def save_transactions(transactions: Sequence[Transaction], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDS)
+        writer = csv.DictWriter(handle, fieldnames=FIELDS, lineterminator="\n")
         writer.writeheader()
         for txn in transactions:
             writer.writerow(

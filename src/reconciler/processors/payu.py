@@ -1,6 +1,9 @@
-"""PayU Latam -- reconciliation report (XML).
+"""PayU Latam -- representative reconciliation report (XML).
 
-Modelled on PayU Latam's XML reporting, the dominant PSE acquirer in Colombia:
+PayU publicly documents its financial-statement reconciliation concepts. This
+challenge fixture puts those concepts in a small XML envelope so the ingestion
+layer must handle a third format; it is not claimed to be a drop-in merchant
+export schema:
 
 * money lives in element *attributes* rather than child elements
 * Colombian pesos have no minor unit, so amounts are whole numbers and any
@@ -11,7 +14,8 @@ Modelled on PayU Latam's XML reporting, the dominant PSE acquirer in Colombia:
 * the batch header restates its own totals, which is what makes header-versus-
   detail validation possible
 
-Public reference: PayU Latam reporting/queries API (XML).
+Public reference:
+https://developers.payulatam.com/latam/en/payu-module-documentation/reports/financial-statement.html
 """
 
 from __future__ import annotations

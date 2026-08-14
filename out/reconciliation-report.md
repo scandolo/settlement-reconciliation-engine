@@ -1,6 +1,6 @@
 # Settlement reconciliation — as of 2026-08-14
 
-_Generated 2026-08-14T13:01:59+00:00_
+_Generated 2026-08-14T13:15:27+00:00_
 
 ## Summary
 
@@ -10,9 +10,9 @@ _Generated 2026-08-14T13:01:59+00:00_
 | Settlement lines | 212 |
 | Ledger transactions | 340 |
 | Expecting settlement | 254 |
-| Matched | 209 |
-| Unmatched | 45 |
-| Match rate | 82.28% |
+| Matched | 208 |
+| Unmatched | 46 |
+| Match rate | 81.89% |
 | Discrepancies | 26 |
 
 ## Settled volume

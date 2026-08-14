@@ -8,9 +8,9 @@ they need:
 * `@batch_detector`  -- one payout against its own header totals
 * `@ledger_detector` -- the whole run against the internal ledger
 
-Adding a rule means writing one function under fifteen lines and decorating it.
-Every detector guards its own preconditions, so they can run in any order and
-none can corrupt another.
+Adding a rule means writing one focused function and decorating it. Every
+detector guards its own preconditions, so they can run in any order and none
+can corrupt another.
 """
 
 from __future__ import annotations

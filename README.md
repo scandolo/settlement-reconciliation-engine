@@ -8,7 +8,7 @@ them line by line against the internal transaction ledger, and produces a
 ranked worklist of everything that does not add up — with the money at stake
 and the next action attached to each finding.
 
-**Live dashboard:** see the deployment link on the submission.
+**Live dashboard:** [settlement-reconciliation-engine.vercel.app](https://settlement-reconciliation-engine.vercel.app)
 **Zero dependencies.** Python 3.10+ standard library only, so it runs anywhere
 without an install step.
 
@@ -17,7 +17,8 @@ without an install step.
 ## Quick start
 
 ```bash
-git clone <this-repo> && cd settlement-reconciliation-engine
+git clone https://github.com/scandolo/settlement-reconciliation-engine.git
+cd settlement-reconciliation-engine
 make demo          # or: PYTHONPATH=src python3 -m reconciler demo
 ```
 
@@ -26,7 +27,7 @@ result against known ground truth. It takes about a second and needs nothing
 installed.
 
 ```bash
-make test          # 26 tests, standard library unittest
+make test          # 27 tests, standard library unittest
 make processors    # registered processors, currencies, rate cards, detectors
 make report        # write the Markdown report to out/
 ```
@@ -56,7 +57,8 @@ From 340 ledger transactions and 9 settlement files across 4 processors:
   Batches processed      9
   Settlement lines       212
   Ledger transactions    340 (254 expecting settlement)
-  Matched                209  (82.3%)
+  Matched                208  (81.9%)
+  Unmatched              46
   Discrepancies          26
 
   MONEY AT RISK   (positive = owed to us, negative = overpaid to us)
@@ -86,10 +88,10 @@ The user is a **reconciliation analyst closing the month** — the person
 currently spending 60+ hours doing this by hand — and secondarily the **CFO**
 who wants one number. Three consequences run through the whole design:
 
-1. **It is an exception tool, not a report.** 212 settlement lines matched
-   cleanly; nobody needs to see those. The output is the 26 that did not,
-   ordered by money at risk rather than by file order, so the worst thing is
-   the first thing.
+1. **It is an exception tool, not a ledger dump.** Most of the 212 settlement
+   lines require no action; nobody needs to inspect those one by one. The
+   output is the 26 actionable findings, ordered by money at risk rather than
+   by file order, so the worst thing is the first thing.
 2. **Every finding carries its next action.** Not an error code — the sentence
    the analyst would otherwise have to compose: which processor to contact,
    what to quote, and what happens if they do nothing.
@@ -165,8 +167,8 @@ registry. Rate cards, SLAs and tolerances are data on a `ProcessorProfile`.
 Renegotiating a fee, onboarding a market, or changing a materiality threshold
 is a data change, not a deploy of new logic.
 
-**Detectors are small and independent.** Each is a function under fifteen lines
-that guards its own preconditions and yields findings. They can run in any
+**Detectors are focused and independent.** Each guards its own preconditions
+and yields findings. They can run in any
 order and none can corrupt another. Adding a rule does not mean touching a
 600-line class — it means writing a function and decorating it.
 
@@ -184,9 +186,21 @@ claim.
 
 ## Processors
 
-Four real processors, modelled on their public report formats — because the
-awkwardness is the point. Two of these are CSV and look nothing alike, which is
-exactly the situation a real reconciliation team is in.
+Four real processors, represented by adapters informed by their public
+reconciliation and payment documentation — because the awkwardness is the
+point. Two of these are CSV and look nothing alike, which is exactly the
+situation a real reconciliation team is in.
+
+This is a challenge implementation, not a certified parser for production
+exports. Adyen and Stripe closely follow their documented reconciliation
+columns. dLocal and PayU publish relevant payment and reconciliation concepts,
+but exact merchant settlement exports can be account-specific; their JSON and
+XML fixtures are therefore representative schemas built from those public
+concepts. A production rollout would validate each adapter against redacted
+files from the merchant account before enabling it.
+
+The fee cards and settlement SLAs are illustrative CafeTerra contract
+configuration, not claims about the processors' public pricing or payout terms.
 
 | Processor | Markets | Currencies | Format | SLA | The quirk that breaks naive parsers |
 | --- | --- | --- | --- | --- | --- |
@@ -194,6 +208,13 @@ exactly the situation a real reconciliation team is in.
 | **Stripe** | MX, US | USD, MXN | CSV | 3d | Lowercase currency codes; refund/payout/adjustment rows share the file and must be filtered out; payout row states the true deposit |
 | **dLocal** | BR, MX, CO | BRL, MXN, COP, USD | JSON | 5d | Amounts as decimal strings; deduction split into commission plus local tax (IOF/IVA) |
 | **PayU Latam** | CO | COP | XML | 7d | Money in element attributes; whole-peso COP; carries both `payuOrderId` and our `reference` — matching on the wrong one is the classic bug |
+
+Public references used for the models:
+
+- [Adyen Settlement details report](https://docs.adyen.com/reporting/settlement-reconciliation/transaction-level/settlement-details-report)
+- [Stripe Payout reconciliation report](https://docs.stripe.com/reports/payout-reconciliation)
+- [dLocal Order object](https://docs.dlocal.com/reference/the-order-object)
+- [PayU Latam Financial Statement](https://developers.payulatam.com/latam/en/payu-module-documentation/reports/financial-statement.html)
 
 Run `make processors` to print the live registry, including every rate card.
 
@@ -268,13 +289,13 @@ and the ground-truth verification harness.
 ## Testing
 
 ```bash
-make test     # 26 tests
+make test     # 27 tests
 ```
 
 Three layers, matching the three things that can be wrong:
 
 - **Money** — quantisation per currency, refusal to mix currencies, and parsing
-  of the formats processors really send (`R$ 1.234,56`, `1,234.56`, `(45.10)`,
+  of the localized formats represented in the fixtures (`R$ 1.234,56`, `1,234.56`, `(45.10)`,
   `2.000.000`). Note `10.567` is 10.57 in BRL and 10,567 in COP; the parser
   reads separators against the currency rather than guessing.
 - **Adapters** — every writer in `datagen.py` is the exact inverse of its
@@ -284,6 +305,25 @@ Three layers, matching the three things that can be wrong:
 
 Plus end-to-end: determinism, 100% ground-truth recall, no silent currency
 conversion in exposure, and all four renderers producing output.
+
+---
+
+## How I used AI
+
+I used AI as an implementation partner: to turn the brief into a scored design,
+scaffold the adapters and fixtures, diagnose round-trip parsing failures, and
+draft the reporting layer and dashboard. I kept the product and architecture
+decisions explicit: CLI-first for reviewer speed, a canonical model between
+files and rules, no implicit currency conversion, and an exception worklist for
+finance rather than a generic engineering dashboard.
+
+Generated code was not treated as evidence that the engine worked. I verified
+it with 27 unit and integration tests, deterministic ground truth that measures
+15/15 injected defects, a fresh-clone run of the documented command, and checks
+against the deployed report. I also changed the initial approach after review:
+fictional processors became public-doc-informed adapters, three currencies
+became a registry with USD and non-two-decimal examples, and the report became
+a finance workflow rather than raw output.
 
 ---
 

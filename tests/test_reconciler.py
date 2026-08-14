@@ -109,7 +109,7 @@ class MoneyTests(unittest.TestCase):
         with self.assertRaises(CurrencyMismatchError):
             Money.parse("1", "BRL") < Money.parse("1", "MXN")
 
-    def test_parses_the_formats_processors_actually_send(self):
+    def test_parses_supported_localized_money_formats(self):
         cases = [
             ("R$ 1.234,56", "BRL", "1234.56"),  # pt-BR decimal comma
             ("1,234.56", "USD", "1234.56"),  # en-US thousands separator
@@ -221,6 +221,20 @@ class DetectorTests(unittest.TestCase):
             DiscrepancyType.STATUS_CONFLICT.value,
             types_found([txn(status=TransactionStatus.REFUNDED)], [batch(line())]),
         )
+
+    def test_non_settleable_transactions_do_not_inflate_the_match_rate(self):
+        captured = txn(tid="CT-CAPTURED")
+        refunded = txn(tid="CT-REFUNDED", status=TransactionStatus.REFUNDED)
+        settlement = batch(line(tid="CT-CAPTURED"), line(tid="CT-REFUNDED"))
+
+        result = ReconciliationEngine(
+            [captured, refunded], PROFILES, DEFAULT_RULES
+        ).reconcile([settlement], as_of=AS_OF)
+
+        self.assertEqual(result.awaiting_settlement, 1)
+        self.assertEqual(result.matched_ids, {"CT-CAPTURED"})
+        self.assertEqual(result.unmatched_count, 0)
+        self.assertEqual(str(result.match_rate), "1")
 
     def test_duplicate_settlement_across_two_payouts(self):
         first = batch(line())

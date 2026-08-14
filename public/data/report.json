@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-08-14T13:01:59+00:00",
+  "generated_at": "2026-08-14T13:15:27+00:00",
   "as_of": "2026-08-14",
   "summary": {
     "batches_processed": 9,
     "settlement_lines": 212,
     "ledger_transactions": 340,
     "awaiting_settlement": 254,
-    "matched": 209,
-    "unmatched": 45,
-    "match_rate": "82.28%",
+    "matched": 208,
+    "unmatched": 46,
+    "match_rate": "81.89%",
     "discrepancies": 26,
     "indicative_exposure_usd": "910.68"
   },

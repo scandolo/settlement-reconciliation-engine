@@ -65,7 +65,7 @@ def to_json(result: ReconciliationResult) -> str:
 def to_csv(result: ReconciliationResult) -> str:
     """Flat exception list -- the format finance teams actually work in."""
     buffer = io.StringIO()
-    writer = csv.writer(buffer)
+    writer = csv.writer(buffer, lineterminator="\n")
     writer.writerow(
         ["id", "severity", "type", "processor", "batch_id", "transaction_ids",
          "expected", "actual", "impact", "currency", "description", "recommended_action"]

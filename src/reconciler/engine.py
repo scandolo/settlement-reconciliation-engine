@@ -166,7 +166,14 @@ class ReconciliationEngine:
                 )
             result.discrepancies += run_batch_detectors(BatchContext(batch, self.rules))
 
-        result.matched_ids = {tid for tid in settlements if tid in self.ledger}
+        # The match-rate denominator contains only transactions that should
+        # settle, so the numerator must use the same population. A refunded or
+        # merely-authorized transaction appearing in a payout is a status
+        # conflict, not a successful match.
+        expected_ids = {
+            tid for tid, transaction in self.ledger.items() if transaction.expects_settlement
+        }
+        result.matched_ids = expected_ids.intersection(settlements)
         result.discrepancies += run_ledger_detectors(
             LedgerContext(
                 ledger=self.ledger,

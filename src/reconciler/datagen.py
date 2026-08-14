@@ -464,7 +464,7 @@ def _plain(amount: Money) -> str:
 def write_adyen(batch: SettlementBatch, path: Path) -> None:
     """Adyen settlement detail report: quoted CSV, fee split four ways."""
     buffer = io.StringIO()
-    writer = csv.writer(buffer, quoting=csv.QUOTE_ALL)
+    writer = csv.writer(buffer, quoting=csv.QUOTE_ALL, lineterminator="\n")
     writer.writerow(
         [
             "Company Account", "Merchant Account", "Psp Reference", "Merchant Reference",
@@ -499,7 +499,7 @@ def _adyen_method(method: str | None) -> str:
 def write_stripe(batch: SettlementBatch, path: Path) -> None:
     """Stripe payout reconciliation: lowercase currencies, plus non-charge rows."""
     buffer = io.StringIO()
-    writer = csv.writer(buffer)
+    writer = csv.writer(buffer, lineterminator="\n")
     writer.writerow(
         [
             "balance_transaction_id", "created_utc", "gross", "fee", "net", "currency",
@@ -530,7 +530,7 @@ def write_stripe(batch: SettlementBatch, path: Path) -> None:
 
 
 def write_dlocal(batch: SettlementBatch, path: Path) -> None:
-    """dLocal settlement: JSON, decimal strings, commission split from local tax."""
+    """Representative dLocal settlement fixture based on public payment fields."""
     payments = []
     for index, line in enumerate(batch.lines):
         tax = line.fee.scaled("0.15")
@@ -564,7 +564,7 @@ def write_dlocal(batch: SettlementBatch, path: Path) -> None:
 
 
 def write_payu(batch: SettlementBatch, path: Path) -> None:
-    """PayU Latam reconciliation: XML, money in attributes, whole-peso COP."""
+    """Representative PayU XML fixture with whole-peso COP amounts."""
     rows = "\n".join(
         f'    <Transaction payuOrderId="PU{index:09d}" reference="{line.transaction_id}" '
         f'method="{line.payment_method}" currency="{line.currency}" '

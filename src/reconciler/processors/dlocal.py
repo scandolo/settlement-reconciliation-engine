@@ -1,7 +1,8 @@
-"""dLocal -- cross-border settlement report (JSON).
+"""dLocal -- representative cross-border settlement report (JSON).
 
-Modelled on dLocal's real payout/settlement payload, the cross-border LatAm
-specialist most relevant to a Brazil/Mexico/Colombia merchant:
+The public dLocal payment object informs identifiers, currencies, amounts and
+JSON conventions. The settlement envelope is a challenge fixture because exact
+merchant settlement exports are account-specific:
 
 * amounts arrive as decimal *strings*, not numbers, to avoid float drift
 * the merchant's reference is `order_id`; dLocal's own is `payment_id`
@@ -10,7 +11,7 @@ specialist most relevant to a Brazil/Mexico/Colombia merchant:
 * cross-border volume may settle in USD while the payment was taken in local
   currency -- the report keeps both, and we must not convert between them
 
-Public reference: dLocal payments/payouts API report structure.
+Public reference: https://docs.dlocal.com/reference/the-order-object
 """
 
 from __future__ import annotations

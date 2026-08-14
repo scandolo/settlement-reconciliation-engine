@@ -54,6 +54,20 @@ def to_dict(result: ReconciliationResult) -> dict:
             "indicative_exposure_usd": str(result.exposure_usd()),
         },
         "settled_totals": {k: v.to_json() for k, v in sorted(result.totals_by_currency.items())},
+        "indicative_totals_usd": {
+            "gross": str(sum(
+                (result.rules.usd_equivalent(value.gross) for value in result.totals_by_currency.values()),
+                start=0,
+            )),
+            "fees": str(sum(
+                (result.rules.usd_equivalent(value.fees) for value in result.totals_by_currency.values()),
+                start=0,
+            )),
+            "net": str(sum(
+                (result.rules.usd_equivalent(value.net) for value in result.totals_by_currency.values()),
+                start=0,
+            )),
+        },
         "settled_by_processor": {
             k: v.to_json() for k, v in sorted(result.totals_by_processor.items())
         },

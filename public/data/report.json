@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-14T13:51:45+00:00",
+  "generated_at": "2026-08-14T14:10:20+00:00",
   "as_of": "2026-08-14",
   "summary": {
     "batches_processed": 9,
@@ -41,6 +41,11 @@
       "net": "US$17,514.34 USD",
       "lines": 53
     }
+  },
+  "indicative_totals_usd": {
+    "gross": "58702.59",
+    "fees": "1572.44",
+    "net": "57126.03"
   },
   "settled_by_processor": {
     "Adyen \u00b7 BRL": {

@@ -309,6 +309,7 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(len(report["files"]), result.batches)
         self.assertEqual(len(report["batches"]), result.batches)
         self.assertEqual(len(report["matched_transactions"]), len(result.matched_ids))
+        self.assertEqual(set(report["indicative_totals_usd"]), {"gross", "fees", "net"})
         self.assertTrue(
             {
                 "transaction_id", "internal_amount", "gross",

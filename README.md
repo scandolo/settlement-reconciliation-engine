@@ -57,17 +57,19 @@ From 340 ledger transactions and 9 settlement files across 4 processors:
   Settlement lines       212
   Ledger transactions    340 (254 expecting settlement)
   Matched                209  (82.3%)
-  Discrepancies          25
+  Discrepancies          26
 
   MONEY AT RISK   (positive = owed to us, negative = overpaid to us)
     BRL   R$-1,016.22 BRL
-    COP   COL$-933,862 COP
+    COP   COL$-1,680,537 COP
     MXN   MX$5,555.89 MXN
     USD   US$2.04 USD
+    indicative total  ~US$910.68
 
   BY TYPE  settlement_aging=8  fee_error=3  processor_mismatch=3  missing_settlement=3
-           amount_mismatch=2  unknown_settlement=2  net_arithmetic_error=1
-           status_conflict=1  currency_mismatch=1  duplicate_settlement=1
+           amount_mismatch=2  unknown_settlement=2  batch_total_mismatch=1
+           net_arithmetic_error=1  status_conflict=1  currency_mismatch=1
+           duplicate_settlement=1
 ```
 
 And, from `verify`:
@@ -85,7 +87,7 @@ currently spending 60+ hours doing this by hand — and secondarily the **CFO**
 who wants one number. Three consequences run through the whole design:
 
 1. **It is an exception tool, not a report.** 212 settlement lines matched
-   cleanly; nobody needs to see those. The output is the 25 that did not,
+   cleanly; nobody needs to see those. The output is the 26 that did not,
    ordered by money at risk rather than by file order, so the worst thing is
    the first thing.
 2. **Every finding carries its next action.** Not an error code — the sentence

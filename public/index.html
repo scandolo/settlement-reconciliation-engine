@@ -3,172 +3,1207 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Settlement Reconciliation — CafeTerra</title>
+<meta name="theme-color" content="#f6f5f0">
+<title>Reconcile — Settlement reconciliation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #14151a; --muted: #6b7280; --line: #e5e7eb; --bg: #fbfbfd;
-    --brand: #4338ca; --crit: #b91c1c; --high: #c2410c; --med: #a16207; --low: #64748b;
+    color-scheme: light;
+    --canvas: #f6f5f0;
+    --surface: #fffefa;
+    --surface-muted: #efeee8;
+    --ink: #17201c;
+    --muted: #64706a;
+    --faint: #8a948f;
+    --line: #d8dcd7;
+    --line-strong: #b9c1bc;
+    --accent: #176b4d;
+    --accent-hover: #10583e;
+    --accent-soft: #e5f1eb;
+    --critical: #9f2d2b;
+    --critical-soft: #f8e7e4;
+    --high: #a54d1c;
+    --high-soft: #faebdf;
+    --medium: #80620d;
+    --medium-soft: #f5edcf;
+    --low: #55635c;
+    --low-soft: #e8ece9;
+    --focus: #1476d4;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --shadow-menu: 0 12px 32px rgba(23, 32, 28, .14);
   }
+
   * { box-sizing: border-box; }
+  html { min-width: 320px; background: var(--canvas); }
   body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font: 15px/1.55 ui-sans-serif, -apple-system, "Segoe UI", Inter, system-ui, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: "DM Sans", "Avenir Next", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    text-rendering: optimizeLegibility;
   }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 80px; }
-  header { border-bottom: 1px solid var(--line); padding-bottom: 22px; margin-bottom: 30px; }
-  h1 { font-size: 25px; margin: 0 0 6px; letter-spacing: -0.02em; }
-  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.09em;
-       color: var(--muted); margin: 38px 0 14px; font-weight: 600; }
-  .sub { color: var(--muted); font-size: 14px; }
-  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 12px; }
-  .tile { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 15px 17px; }
-  .tile .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
-  .tile .v { font-size: 25px; font-weight: 600; margin-top: 5px; letter-spacing: -0.02em; }
-  .tile.alert .v { color: var(--crit); }
-  .table-scroll { width: 100%; overflow-x: auto; border: 1px solid var(--line);
-                  border-radius: 10px; background: #fff; -webkit-overflow-scrolling: touch; }
-  table { width: 100%; border-collapse: collapse; background: #fff; font-size: 14px; }
-  .volume table { min-width: 760px; }
-  .worklist table { min-width: 1040px; }
-  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em;
-       color: var(--muted); padding: 11px 14px; border-bottom: 1px solid var(--line); font-weight: 600; }
-  td { padding: 11px 14px; border-bottom: 1px solid #f1f2f4; vertical-align: top; }
-  tr:last-child td { border-bottom: none; }
-  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  code { font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: #374151; }
-  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px;
-          font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-  .critical { background: #fee2e2; color: var(--crit); }
-  .high { background: #ffedd5; color: var(--high); }
-  .medium { background: #fef3c7; color: var(--med); }
-  .low { background: #f1f5f9; color: var(--low); }
-  .action { color: var(--muted); font-size: 13px; margin-top: 5px; }
-  .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
-  button { font: inherit; font-size: 13px; padding: 6px 13px; border-radius: 999px;
-           border: 1px solid var(--line); background: #fff; cursor: pointer; color: var(--muted); }
-  button.on { background: var(--brand); border-color: var(--brand); color: #fff; }
-  input { font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 999px;
-          border: 1px solid var(--line); min-width: 230px; }
-  footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid var(--line);
-           color: var(--muted); font-size: 13px; }
-  a { color: var(--brand); }
-  @media (max-width: 640px) {
-    .wrap { padding: 24px 14px 48px; }
-    h1 { font-size: 22px; }
-    .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .tile { padding: 13px; }
-    .tile .v { font-size: 21px; }
-    input { flex: 1 0 100%; min-width: 0; width: 100%; }
+  button, input, select { font: inherit; }
+  button, summary, label[for] { -webkit-tap-highlight-color: transparent; }
+  button { cursor: pointer; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:visited { color: #5f536f; }
+  :focus-visible { outline: 3px solid color-mix(in srgb, var(--focus) 60%, transparent); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+
+  .app-header {
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 254, 250, .92);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(12px);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    min-height: 44px;
+  }
+  .brand-mark {
+    width: 23px;
+    height: 23px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+  }
+  .brand-mark span { background: var(--accent); border-radius: 2px; }
+  .brand-mark span:nth-child(2), .brand-mark span:nth-child(3) { opacity: .55; }
+  .header-meta { display: flex; align-items: center; gap: 18px; font-size: 14px; }
+  .workspace-label { color: var(--muted); }
+  .source-link { min-height: 44px; display: inline-flex; align-items: center; font-weight: 600; text-decoration: none; }
+
+  .shell { width: min(1120px, calc(100% - 48px)); margin: 0 auto; padding: 40px 0 80px; }
+  .stepper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 480px;
+    margin: 0 0 44px;
+    padding: 0;
+    list-style: none;
+  }
+  .stepper li { position: relative; min-width: 0; }
+  .stepper li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: 31px;
+    right: 7px;
+    height: 1px;
+    background: var(--line-strong);
+  }
+  .step {
+    display: inline-grid;
+    grid-template-columns: 30px auto;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--faint);
+    font-size: 14px;
+    min-height: 44px;
+    position: relative;
+    z-index: 1;
+  }
+  .step-number {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    background: var(--canvas);
+    color: var(--muted);
+    font: 500 13px/1 "DM Mono", monospace;
+  }
+  .step[aria-current="step"] { color: var(--ink); font-weight: 600; }
+  .step[aria-current="step"] .step-number { border-color: var(--accent); background: var(--accent); color: white; }
+  .step.complete { color: var(--muted); }
+  .step.complete .step-number { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+  .screen { animation: enter .24s ease-out both; }
+  .page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 32px;
+  }
+  .eyebrow {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  h1, h2, h3, p { margin-top: 0; }
+  h1 {
+    margin-bottom: 10px;
+    max-width: 760px;
+    font-size: clamp(32px, 5vw, 48px);
+    line-height: 1.08;
+    letter-spacing: -.045em;
+    text-wrap: balance;
+  }
+  h1[tabindex="-1"]:focus { outline: none; }
+  h2 { margin-bottom: 8px; font-size: 23px; line-height: 1.2; letter-spacing: -.025em; }
+  h3 { margin-bottom: 6px; font-size: 17px; line-height: 1.3; letter-spacing: -.01em; }
+  .lede { max-width: 650px; margin-bottom: 0; color: var(--muted); font-size: 18px; text-wrap: pretty; }
+  .small { color: var(--muted); font-size: 14px; }
+  .mono, code { font-family: "DM Mono", ui-monospace, monospace; font-size: .9em; }
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  .setup-grid { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 32px; align-items: start; }
+  .field-stack { display: grid; gap: 16px; }
+  .upload-target {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 96px;
+    padding: 20px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+  }
+  .upload-target.dragging { border-color: var(--accent); background: var(--accent-soft); }
+  .file-glyph {
+    flex: 0 0 34px;
+    width: 34px;
+    height: 42px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 4px;
+    position: relative;
+    background: white;
+  }
+  .file-glyph::before, .file-glyph::after {
+    content: ""; position: absolute; left: 8px; right: 8px; height: 1px; background: var(--line-strong);
+  }
+  .file-glyph::before { top: 17px; }
+  .file-glyph::after { top: 24px; }
+  .upload-copy { flex: 1; min-width: 0; }
+  .upload-label { display: block; margin-bottom: 2px; color: var(--muted); font-size: 13px; font-weight: 600; }
+  .upload-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  .upload-meta { margin-top: 3px; color: var(--muted); font-size: 13px; }
+  .file-action {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .file-action:hover { background: var(--surface-muted); }
+  .file-list-disclosure { margin: -4px 0 0 70px; }
+  .file-list-disclosure summary {
+    width: fit-content;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .mini-file-list { margin: 0 0 8px; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .mini-file-list li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .mini-file-list span:last-child { color: var(--muted); }
+  .date-field { padding-top: 4px; }
+  .date-field label { display: block; margin-bottom: 7px; font-size: 14px; font-weight: 600; }
+  input[type="date"], input[type="search"], select {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+    padding: 0 12px;
+  }
+  .advanced { margin-top: 24px; border-top: 1px solid var(--line); }
+  .advanced summary { min-height: 48px; display: flex; align-items: center; color: var(--muted); cursor: pointer; font-size: 14px; font-weight: 600; }
+  .advanced-content { padding: 2px 0 16px; color: var(--muted); font-size: 14px; }
+  .advanced-content p { margin-bottom: 6px; }
+
+  .action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .button {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 18px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .button.primary { background: var(--accent); color: white; }
+  .button.primary:hover { background: var(--accent-hover); }
+  .button.secondary { border-color: var(--line-strong); background: var(--surface); color: var(--ink); }
+  .button.secondary:hover { background: var(--surface-muted); }
+  .button.quiet { border-color: transparent; background: transparent; color: var(--accent); }
+  .button.quiet:hover { background: var(--accent-soft); }
+  .button:disabled { opacity: .52; cursor: not-allowed; }
+
+  .review-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border: 1px solid #bdd2c7;
+    border-radius: var(--radius-sm);
+    background: var(--accent-soft);
+    color: #184d39;
+    font-weight: 600;
+  }
+  .checkmark { font-size: 18px; line-height: 1; }
+  .table-wrap { overflow-x: auto; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  td { padding: 13px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: 0; }
+  .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 26px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: capitalize;
+    white-space: nowrap;
+  }
+  .status.ready, .status.matched { background: var(--accent-soft); color: var(--accent); }
+  .status.review { background: var(--high-soft); color: var(--high); }
+  .status.blocked { background: var(--critical-soft); color: var(--critical); }
+  .preflight-checks { margin-top: 16px; }
+  .preflight-checks summary { min-height: 44px; display: flex; align-items: center; color: var(--muted); cursor: pointer; font-size: 14px; }
+  .check-list { columns: 2; margin: 0; padding: 0 0 4px 20px; color: var(--muted); font-size: 14px; }
+
+  .run-state { display: none; align-items: center; gap: 10px; color: var(--muted); font-size: 14px; }
+  .run-state.visible { display: flex; }
+  .spinner { width: 17px; height: 17px; border: 2px solid var(--line-strong); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
+
+  .results-head { align-items: flex-start; margin-bottom: 24px; }
+  .results-head h1 { font-size: clamp(32px, 4vw, 44px); }
+  .results-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .export-menu { position: relative; }
+  .export-menu > summary { list-style: none; }
+  .export-menu > summary::-webkit-details-marker { display: none; }
+  .export-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 240px;
+    padding: 7px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-menu);
+    z-index: 10;
+  }
+  .export-panel button { width: 100%; min-height: 44px; padding: 0 10px; border: 0; border-radius: 5px; background: transparent; color: var(--ink); text-align: left; }
+  .export-panel button:hover { background: var(--surface-muted); }
+  .result-verdict { display: flex; align-items: center; gap: 10px; color: var(--critical); font-size: 15px; font-weight: 700; }
+  .result-verdict::before { content: ""; width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: currentColor; }
+  .metric-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 24px 0 32px;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .metric { padding: 18px 20px; border-right: 1px solid var(--line); }
+  .metric:first-child { padding-left: 0; }
+  .metric:last-child { border-right: 0; }
+  .metric-value { display: block; margin-bottom: 2px; font-size: 26px; line-height: 1.2; font-weight: 700; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+  .metric-label { color: var(--muted); font-size: 13px; }
+  .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin: 32px 0 14px; }
+  .section-head h2, .section-head p { margin-bottom: 0; }
+  .currency-table td:first-child { font-weight: 700; }
+  .risk-positive { color: var(--critical); font-weight: 700; }
+  .risk-negative { color: var(--high); font-weight: 700; }
+
+  .tabs { margin-top: 44px; }
+  .tab-list { display: flex; gap: 28px; border-bottom: 1px solid var(--line-strong); overflow-x: auto; }
+  .tab-button {
+    min-height: 48px;
+    padding: 0 1px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .tab-button[aria-selected="true"] { border-bottom-color: var(--accent); color: var(--ink); }
+  .tab-count { margin-left: 5px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .tab-panel { padding-top: 24px; }
+  .toolbar { display: grid; grid-template-columns: minmax(220px, 1fr) auto; align-items: center; gap: 16px; margin-bottom: 18px; }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .filter {
+    min-height: 44px;
+    padding: 0 11px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .filter[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: white; }
+  .type-breakdown { margin: -4px 0 16px; }
+  .type-breakdown summary { min-height: 44px; display: flex; align-items: center; width: fit-content; color: var(--accent); cursor: pointer; font-size: 14px; font-weight: 600; }
+  .type-grid { display: flex; flex-wrap: wrap; gap: 7px 18px; padding-bottom: 10px; color: var(--muted); font-size: 13px; }
+  .type-grid span strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  .exception-list { border-top: 1px solid var(--line-strong); }
+  .exception { border-bottom: 1px solid var(--line); background: transparent; }
+  .exception > summary {
+    min-height: 82px;
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr) minmax(120px, auto);
+    align-items: center;
+    gap: 18px;
+    padding: 14px 4px;
+    cursor: pointer;
+    list-style: none;
+  }
+  .exception > summary::-webkit-details-marker { display: none; }
+  .exception > summary:hover .exception-title { color: var(--accent); }
+  .severity {
+    width: fit-content;
+    min-height: 26px;
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .severity.critical { background: var(--critical-soft); color: var(--critical); }
+  .severity.high { background: var(--high-soft); color: var(--high); }
+  .severity.medium { background: var(--medium-soft); color: var(--medium); }
+  .severity.low { background: var(--low-soft); color: var(--low); }
+  .exception-title { display: block; margin-bottom: 3px; font-weight: 700; transition: color .12s ease-out; }
+  .exception-meta { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+  .exception-impact { text-align: right; }
+  .exception-impact strong { display: block; color: var(--critical); font-size: 15px; font-variant-numeric: tabular-nums; }
+  .exception-impact span { color: var(--muted); font-size: 12px; }
+  .exception-body { padding: 2px 4px 24px 110px; }
+  .finding-description { max-width: 760px; margin-bottom: 18px; color: var(--muted); }
+  .comparison { display: grid; grid-template-columns: 1fr 1fr; max-width: 760px; margin-bottom: 16px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .comparison > div { padding: 12px 14px 12px 0; }
+  .comparison > div + div { padding-left: 14px; border-left: 1px solid var(--line); }
+  .detail-label { display: block; margin-bottom: 4px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .recommended { max-width: 760px; margin-bottom: 14px; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--surface-muted); }
+  .recommended strong { display: block; margin-bottom: 3px; }
+  .provenance { color: var(--muted); font-size: 13px; }
+  .provenance code { color: var(--ink); }
+  .empty { padding: 36px 0; color: var(--muted); text-align: center; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .load-more { margin-top: 16px; }
+
+  .toast {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    max-width: min(380px, calc(100vw - 44px));
+    padding: 13px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--ink);
+    color: white;
+    box-shadow: var(--shadow-menu);
+    font-size: 14px;
+    font-weight: 600;
+    transform: translateY(16px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .18s ease-out, opacity .18s ease-out;
+    z-index: 50;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .error-state { max-width: 620px; margin: 80px auto; padding: 24px; border: 1px solid var(--line); background: var(--surface); }
+
+  @keyframes enter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (min-width: 1440px) {
+    .shell { width: min(1180px, calc(100% - 96px)); }
+  }
+  @media (max-width: 1024px) {
+    .shell { width: min(100% - 40px, 960px); }
+    .setup-grid { grid-template-columns: minmax(0, 1fr) 210px; gap: 24px; }
+    .exception > summary { grid-template-columns: 86px minmax(0, 1fr) minmax(110px, auto); }
+    .exception-body { padding-left: 104px; }
+  }
+  @media (max-width: 768px) {
+    .app-header { padding: 0 20px; }
+    .workspace-label { display: none; }
+    .shell { width: calc(100% - 32px); padding-top: 28px; }
+    .stepper { margin-bottom: 30px; max-width: none; }
+    .step { grid-template-columns: 44px; width: 44px; gap: 0; }
+    .step-number { margin: 0 auto; }
+    .step-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+    .page-head, .results-head { display: block; }
+    .page-head .lede { font-size: 16px; }
+    .results-actions { justify-content: flex-start; margin-top: 20px; }
+    .setup-grid { grid-template-columns: 1fr; }
+    .date-field { max-width: 300px; }
+    .metric-strip { grid-template-columns: repeat(2, 1fr); }
+    .metric:nth-child(2) { border-right: 0; }
+    .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+    .metric:nth-child(3) { padding-left: 0; }
+    .toolbar { grid-template-columns: 1fr; }
+    .filters { justify-content: flex-start; }
+    .exception > summary { grid-template-columns: 82px minmax(0, 1fr); gap: 12px; }
+    .exception-impact { grid-column: 2; text-align: left; margin-top: -10px; }
+    .exception-impact strong, .exception-impact span { display: inline; }
+    .exception-body { padding-left: 94px; }
+    .check-list { columns: 1; }
+  }
+  @media (max-width: 520px) {
+    .app-header { min-height: 58px; padding: 0 16px; }
+    .source-link { display: none; }
+    .shell { width: calc(100% - 24px); padding: 22px 0 56px; }
+    h1 { font-size: 34px; }
+    .upload-target { align-items: flex-start; padding: 16px; }
+    .file-glyph { display: none; }
+    .file-action { flex: 0 0 auto; }
+    .file-list-disclosure { margin-left: 0; }
+    .action-row { align-items: stretch; flex-direction: column-reverse; }
+    .action-row .button { width: 100%; }
+    .results-actions { display: grid; grid-template-columns: 1fr 1fr; }
+    .results-actions .button { width: 100%; padding: 0 10px; }
+    .export-menu { width: 100%; }
+    .export-panel { left: 0; right: auto; width: min(260px, calc(100vw - 24px)); }
+    .metric { padding: 15px 12px; }
+    .metric-value { font-size: 23px; }
+    .section-head { display: block; }
+    .section-head p { margin-top: 5px; }
+    .currency-table thead { display: none; }
+    .currency-table, .currency-table tbody { display: block; }
+    .currency-table tr {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 18px;
+      padding: 16px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .currency-table tr:last-child { border-bottom: 0; }
+    .currency-table td {
+      display: block;
+      padding: 0;
+      border: 0;
+      text-align: left;
+      white-space: normal;
+    }
+    .currency-table td:first-child { grid-column: 1 / -1; font-size: 17px; }
+    .currency-table td::before {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .currency-table td:nth-child(2)::before { content: "Gross"; }
+    .currency-table td:nth-child(3)::before { content: "Fees"; }
+    .currency-table td:nth-child(4)::before { content: "Net"; }
+    .currency-table td:nth-child(5)::before { content: "Money at risk"; }
+    .tab-list { gap: 22px; }
+    .filters { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
+    .filter { padding: 0 6px; }
+    .exception > summary { min-height: 0; grid-template-columns: 1fr; padding: 16px 2px; }
+    .exception-impact { grid-column: 1; margin: 2px 0 0; }
+    .exception-body { padding: 0 2px 22px; }
+    .comparison { grid-template-columns: 1fr; }
+    .comparison > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --canvas: #111713; --surface: #18201b; --surface-muted: #202923;
+      --ink: #e8ece9; --muted: #aab4ae; --faint: #89938d;
+      --line: #344039; --line-strong: #4a574f; --accent: #72c49f; --accent-hover: #8ed5b5;
+      --accent-soft: #1c3b2e; --critical: #f19a94; --critical-soft: #482523;
+      --high: #efaa78; --high-soft: #422d20; --medium: #dec570; --medium-soft: #3a351f;
+      --low: #b3c1b9; --low-soft: #29332d; --focus: #69aef3;
+    }
+    .app-header { background: rgba(24, 32, 27, .9); }
+    .file-glyph { background: var(--surface-muted); }
+    .review-summary { border-color: #37634f; color: #a7dfc5; }
+    .button.primary { color: #102018; }
+    .risk-positive { color: var(--critical); }
+    .risk-negative { color: var(--high); }
   }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Settlement reconciliation — CafeTerra</h1>
-    <p class="sub" id="meta">Loading…</p>
-  </header>
+<header class="app-header">
+  <a class="brand" href="#new" id="brand-link" aria-label="Reconcile home">
+    <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+    <span>Reconcile</span>
+  </a>
+  <div class="header-meta">
+    <span class="workspace-label">CafeTerra · Finance</span>
+    <a class="source-link" href="https://github.com/scandolo/settlement-reconciliation-engine">Source</a>
+  </div>
+</header>
 
-  <div class="tiles" id="tiles"></div>
+<main class="shell" id="app" aria-live="polite">
+  <nav aria-label="Reconciliation progress">
+    <ol class="stepper">
+      <li><button class="step" type="button" data-go-step="upload" aria-current="step"><span class="step-number">1</span><span class="step-label">Files</span></button></li>
+      <li><button class="step" type="button" data-go-step="review" disabled><span class="step-number">2</span><span class="step-label">Review</span></button></li>
+      <li><button class="step" type="button" data-go-step="results" disabled><span class="step-number">3</span><span class="step-label">Results</span></button></li>
+    </ol>
+  </nav>
 
-  <h2>Money at risk</h2>
-  <p class="sub" style="margin-top:-6px">
-    Positive means CafeTerra is owed money; negative means it was overpaid and should expect a
-    clawback. Amounts are never converted to match — the USD figure is indicative, for ranking only.
-  </p>
-  <div class="table-scroll"><table><thead><tr><th>Currency</th><th class="num">Net exposure</th></tr></thead>
-    <tbody id="exposure"></tbody></table></div>
+  <section class="screen" id="screen-upload" aria-labelledby="upload-title">
+    <div class="page-head">
+      <div>
+        <p class="eyebrow">New reconciliation</p>
+        <h1 id="upload-title" tabindex="-1">Bring the ledger and payouts together.</h1>
+        <p class="lede">Compare internal transactions with every processor settlement for the close date.</p>
+      </div>
+    </div>
 
-  <h2>Settled volume by processor</h2>
-  <div class="table-scroll volume"><table><thead><tr>
-    <th>Processor · currency</th><th class="num">Lines</th><th class="num">Gross</th>
-    <th class="num">Fees</th><th class="num">Net</th>
-  </tr></thead><tbody id="volume"></tbody></table></div>
+    <div class="setup-grid">
+      <div class="field-stack">
+        <div>
+          <div class="upload-target" data-drop="ledger">
+            <span class="file-glyph" aria-hidden="true"></span>
+            <span class="upload-copy">
+              <span class="upload-label">Internal ledger</span>
+              <span class="upload-name" id="ledger-name">Loading sample…</span>
+              <span class="upload-meta" id="ledger-meta">CSV</span>
+            </span>
+            <button class="file-action" type="button" data-pick="ledger">Replace</button>
+            <input class="sr-only" id="ledger-input" type="file" accept=".csv,text/csv" aria-label="Replace internal ledger">
+          </div>
+        </div>
 
-  <h2>Exception worklist</h2>
-  <div class="controls" id="filters"></div>
-  <div class="table-scroll worklist"><table><thead><tr>
-    <th>ID</th><th>Severity</th><th>Type</th><th>Processor</th>
-    <th>Transaction</th><th class="num">Impact</th><th>Issue &amp; recommended action</th>
-  </tr></thead><tbody id="worklist"></tbody></table></div>
+        <div>
+          <div class="upload-target" data-drop="settlements">
+            <span class="file-glyph" aria-hidden="true"></span>
+            <span class="upload-copy">
+              <span class="upload-label">Settlement reports</span>
+              <span class="upload-name" id="settlement-name">Loading sample…</span>
+              <span class="upload-meta" id="settlement-meta">CSV, JSON or XML</span>
+            </span>
+            <button class="file-action" type="button" data-pick="settlements">Replace</button>
+            <input class="sr-only" id="settlement-input" type="file" accept=".csv,.json,.xml,text/csv,application/json,text/xml,application/xml" multiple aria-label="Replace settlement reports">
+          </div>
+          <details class="file-list-disclosure">
+            <summary id="show-files">Show settlement files</summary>
+            <ul class="mini-file-list" id="mini-file-list"></ul>
+          </details>
+        </div>
+      </div>
 
-  <footer>
-    Generated by <code>python -m reconciler demo</code> ·
-    <span id="counts" aria-live="polite"></span> ·
-    <a href="https://github.com/scandolo/settlement-reconciliation-engine">source code</a>
-  </footer>
-</div>
+      <aside class="date-field">
+        <label for="as-of">Reconcile as of</label>
+        <input id="as-of" type="date" value="2026-08-14">
+        <p class="small" style="margin:8px 0 0">Transactions due by this date are included.</p>
+        <details class="advanced">
+          <summary>Matching rules</summary>
+          <div class="advanced-content">
+            <p>Exact transaction ID and currency.</p>
+            <p>Contract fee tolerances and processor settlement SLAs.</p>
+          </div>
+        </details>
+      </aside>
+    </div>
+
+    <div class="action-row">
+      <span class="small" id="sample-note">Included sample is ready to review.</span>
+      <button class="button primary" id="review-files" type="button">Review files</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-review" aria-labelledby="review-title" hidden>
+    <div class="page-head">
+      <div>
+        <p class="eyebrow">Preflight</p>
+        <h1 id="review-title" tabindex="-1">Review detected files.</h1>
+        <p class="lede">Confirm the processor, batch, currency, and row count before reconciliation.</p>
+      </div>
+    </div>
+
+    <div class="review-summary" id="preflight-summary"><span class="checkmark" aria-hidden="true">✓</span><span>All files passed preflight.</span></div>
+    <div class="table-wrap">
+      <table class="review-table">
+        <thead><tr><th>File</th><th>Processor</th><th>Format</th><th>Batch</th><th>Date</th><th>Currency</th><th class="num">Lines</th><th>Status</th></tr></thead>
+        <tbody id="review-rows"></tbody>
+      </table>
+    </div>
+    <details class="preflight-checks">
+      <summary>What preflight checks</summary>
+      <ul class="check-list">
+        <li>Supported format</li><li>Required fields</li><li>Duplicate batch or file</li>
+        <li>Valid currency and amount</li><li>Transaction IDs</li><li>Header totals</li>
+      </ul>
+    </details>
+
+    <div class="action-row">
+      <button class="button secondary" type="button" data-go-step="upload">Back to files</button>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end">
+        <span class="run-state" id="run-state"><span class="spinner" aria-hidden="true"></span><span>Comparing transactions and payouts…</span></span>
+        <button class="button primary" id="run-reconciliation" type="button">Reconcile transactions</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-results" aria-labelledby="results-title" hidden>
+    <div class="page-head results-head">
+      <div>
+        <p class="result-verdict">Action required</p>
+        <h1 id="results-title" tabindex="-1">Reconciliation complete.</h1>
+        <p class="lede" id="results-lede">Loading results…</p>
+      </div>
+      <div class="results-actions">
+        <button class="button secondary" type="button" data-go-step="upload">Add or replace files</button>
+        <details class="export-menu">
+          <summary class="button primary">Export <span aria-hidden="true">↓</span></summary>
+          <div class="export-panel">
+            <button type="button" data-export="exceptions">Exception CSV</button>
+            <button type="button" data-export="full">Full reconciliation CSV</button>
+            <button type="button" data-export="markdown">Markdown report</button>
+            <button type="button" data-export="json">JSON report</button>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="metric-strip" id="metric-strip"></div>
+
+    <div class="section-head">
+      <div><h2>Settlement totals</h2><p class="small">Native currencies only. No conversion is used for matching.</p></div>
+    </div>
+    <div class="table-wrap">
+      <table class="currency-table">
+        <thead><tr><th>Currency</th><th class="num">Gross</th><th class="num">Fees</th><th class="num">Net</th><th class="num">Money at risk</th></tr></thead>
+        <tbody id="currency-rows"></tbody>
+      </table>
+    </div>
+
+    <section class="tabs" aria-label="Reconciliation detail">
+      <div class="tab-list" role="tablist" aria-label="Result views">
+        <button class="tab-button" type="button" role="tab" aria-selected="true" aria-controls="panel-exceptions" id="tab-exceptions" data-tab="exceptions">Exceptions <span class="tab-count" id="exception-tab-count"></span></button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-matched" id="tab-matched" data-tab="matched">Matched <span class="tab-count" id="matched-tab-count"></span></button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-batches" id="tab-batches" data-tab="batches">Batches <span class="tab-count" id="batch-tab-count"></span></button>
+      </div>
+
+      <div class="tab-panel" id="panel-exceptions" role="tabpanel" aria-labelledby="tab-exceptions">
+        <div class="toolbar">
+          <label><span class="sr-only">Search exceptions</span><input id="exception-search" type="search" placeholder="Search transaction, processor, batch or type"></label>
+          <div class="filters" id="severity-filters" aria-label="Filter exceptions by severity"></div>
+        </div>
+        <details class="type-breakdown">
+          <summary id="type-summary">Exceptions by type</summary>
+          <div class="type-grid" id="type-grid"></div>
+        </details>
+        <div class="exception-list" id="exception-list"></div>
+      </div>
+
+      <div class="tab-panel" id="panel-matched" role="tabpanel" aria-labelledby="tab-matched" hidden>
+        <div class="toolbar">
+          <label><span class="sr-only">Search matched transactions</span><input id="matched-search" type="search" placeholder="Search transaction, processor or batch"></label>
+          <span class="small" id="matched-visible-count"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Transaction</th><th>Processor</th><th>Batch</th><th>Currency</th><th class="num">Internal</th><th class="num">Gross</th><th class="num">Fees</th><th class="num">Net</th><th>Date</th></tr></thead>
+            <tbody id="matched-rows"></tbody>
+          </table>
+        </div>
+        <button class="button secondary load-more" id="load-more-matched" type="button">Show 50 more</button>
+      </div>
+
+      <div class="tab-panel" id="panel-batches" role="tabpanel" aria-labelledby="tab-batches" hidden>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Batch</th><th>Processor</th><th>Date</th><th>Currency</th><th class="num">Lines</th><th class="num">Gross</th><th class="num">Fees</th><th class="num">Net</th><th>Status</th></tr></thead>
+            <tbody id="batch-rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 const $ = id => document.getElementById(id);
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 })[character]);
-let report = null, severityFilter = "all", query = "";
+const humanize = value => String(value || "").replaceAll("_", " ").replace(/\b\w/g, letter => letter.toUpperCase());
 
-fetch("data/report.json").then(r => r.json()).then(data => { report = data; render(); })
-  .catch(() => { $("meta").textContent = "Could not load data/report.json"; });
+let report = null;
+let sampleReport = null;
+let customPrepared = false;
+let currentStep = "upload";
+let highestStep = 1;
+let severityFilter = "all";
+let exceptionQuery = "";
+let matchedQuery = "";
+let matchedLimit = 50;
+let selectedLedger = null;
+let selectedSettlements = null;
 
-function render() {
+fetch("data/report.json")
+  .then(response => {
+    if (!response.ok) throw new Error(`Report request failed (${response.status})`);
+    return response.json();
+  })
+  .then(data => {
+    sampleReport = data;
+    report = data;
+    hydrateUpload();
+    renderReview();
+    renderResults();
+    const requested = location.hash.slice(1);
+    if (requested === "review") goToStep("review");
+    if (requested.startsWith("results")) {
+      goToStep("results");
+      const tab = requested.split("-")[1];
+      if (["exceptions", "matched", "batches"].includes(tab)) selectTab(tab);
+    }
+  })
+  .catch(error => {
+    $("app").innerHTML = `<div class="error-state"><h1>Report unavailable.</h1><p>${escapeHtml(error.message)}. Refresh the page or regenerate <code>public/data/report.json</code>.</p></div>`;
+  });
+
+function hydrateUpload() {
+  $("as-of").value = report.as_of;
+  $("ledger-name").textContent = report.ledger_file.name;
+  $("ledger-meta").textContent = `${report.ledger_file.transactions.toLocaleString()} transactions · ${report.ledger_file.currencies.join(", ")}`;
+  $("settlement-name").textContent = `${report.files.length} settlement reports`;
+  $("settlement-meta").textContent = `${report.summary.settlement_lines.toLocaleString()} lines · ${new Set(report.files.flatMap(file => file.currencies)).size} currencies`;
+  $("show-files").textContent = `Show ${report.files.length} settlement files`;
+  $("mini-file-list").innerHTML = report.files.map(file => `<li><span class="mono">${escapeHtml(file.name)}</span><span>${escapeHtml(file.processor)} · ${escapeHtml(String(file.format).toUpperCase())}</span></li>`).join("");
+}
+
+document.querySelectorAll("[data-pick]").forEach(button => {
+  button.addEventListener("click", () => $(`${button.dataset.pick}-input`).click());
+});
+
+$("ledger-input").addEventListener("change", event => {
+  selectedLedger = event.target.files[0] || null;
+  customPrepared = false;
+  if (!selectedLedger) return;
+  $("ledger-name").textContent = selectedLedger.name;
+  $("ledger-meta").textContent = `${formatBytes(selectedLedger.size)} · selected for preflight`;
+  $("sample-note").textContent = "Selected files will be checked before reconciliation.";
+});
+
+$("settlement-input").addEventListener("change", event => {
+  selectedSettlements = [...event.target.files];
+  customPrepared = false;
+  if (!selectedSettlements.length) return;
+  $("settlement-name").textContent = `${selectedSettlements.length} settlement report${selectedSettlements.length === 1 ? "" : "s"}`;
+  $("settlement-meta").textContent = `${formatBytes(selectedSettlements.reduce((sum, file) => sum + file.size, 0))} · selected for preflight`;
+  $("show-files").textContent = `Show ${selectedSettlements.length} selected file${selectedSettlements.length === 1 ? "" : "s"}`;
+  $("mini-file-list").innerHTML = selectedSettlements.map(file => `<li><span class="mono">${escapeHtml(file.name)}</span><span>${escapeHtml(file.name.split(".").pop().toUpperCase())}</span></li>`).join("");
+  $("sample-note").textContent = "Selected files will be checked before reconciliation.";
+});
+
+document.querySelectorAll("[data-drop]").forEach(target => {
+  ["dragenter", "dragover"].forEach(type => target.addEventListener(type, event => {
+    event.preventDefault(); target.classList.add("dragging");
+  }));
+  ["dragleave", "drop"].forEach(type => target.addEventListener(type, event => {
+    event.preventDefault(); target.classList.remove("dragging");
+  }));
+  target.addEventListener("drop", event => {
+    const input = $(`${target.dataset.drop}-input`);
+    input.files = event.dataTransfer.files;
+    input.dispatchEvent(new Event("change"));
+  });
+});
+
+$("review-files").addEventListener("click", async () => {
+  const customSelection = selectedLedger || selectedSettlements;
+  if (customSelection && (!selectedLedger || !selectedSettlements?.length)) {
+    showToast("Replace both the ledger and settlement reports to run new data.");
+    return;
+  }
+
+  const button = $("review-files");
+  if (customSelection && !customPrepared) {
+    button.disabled = true;
+    button.textContent = "Checking files…";
+    try {
+      report = await reconcileUploads();
+      customPrepared = true;
+    } catch (error) {
+      report = sampleReport;
+      showToast(error.message);
+      return;
+    } finally {
+      button.disabled = false;
+      button.textContent = "Review files";
+    }
+  }
+  renderReview();
+  renderResults();
+  goToStep("review");
+});
+
+$("run-reconciliation").addEventListener("click", () => {
+  const button = $("run-reconciliation");
+  button.disabled = true;
+  button.textContent = "Reconciling…";
+  $("run-state").classList.add("visible");
+  window.setTimeout(() => {
+    button.disabled = false;
+    button.textContent = runLabel();
+    $("run-state").classList.remove("visible");
+    goToStep("results");
+    showToast(`${report.summary.matched} transactions reconciled. ${report.summary.discrepancies} exceptions need review.`);
+  }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 20 : 720);
+});
+
+document.querySelectorAll("[data-go-step]").forEach(button => {
+  button.addEventListener("click", () => {
+    if (!button.disabled) goToStep(button.dataset.goStep);
+  });
+});
+
+$("brand-link").addEventListener("click", event => { event.preventDefault(); goToStep("upload"); });
+
+function goToStep(step) {
+  if (!report) return;
+  const order = {upload: 1, review: 2, results: 3};
+  highestStep = Math.max(highestStep, order[step]);
+  currentStep = step;
+  document.querySelectorAll(".screen").forEach(screen => { screen.hidden = screen.id !== `screen-${step}`; });
+  document.querySelectorAll(".step").forEach(button => {
+    const number = order[button.dataset.goStep];
+    button.disabled = number > highestStep;
+    button.classList.toggle("complete", number < order[step]);
+    if (number === order[step]) button.setAttribute("aria-current", "step");
+    else button.removeAttribute("aria-current");
+  });
+  const title = $({upload: "upload-title", review: "review-title", results: "results-title"}[step]);
+  window.scrollTo({top: 0, behavior: "smooth"});
+  window.setTimeout(() => title.focus({preventScroll: true}), 30);
+  history.replaceState(null, "", step === "upload" ? "#new" : `#${step}`);
+}
+
+function reviewFiles() {
+  if (customPrepared) return report.files;
+  if (!selectedSettlements) return report.files;
+  return selectedSettlements.map((file, index) => {
+    const format = (file.name.split(".").pop() || "").toLowerCase();
+    const supported = ["csv", "json", "xml"].includes(format);
+    return {
+      name: file.name,
+      processor: detectProcessor(file.name),
+      format,
+      batch_id: supported ? "Detected after upload" : "—",
+      settlement_date: "—",
+      currencies: ["—"],
+      lines: "—",
+      status: supported ? "ready" : "blocked",
+      warnings: supported ? [] : ["Unsupported format"],
+      index
+    };
+  });
+}
+
+function renderReview() {
+  if (!report) return;
+  const files = reviewFiles();
+  const blocked = files.filter(file => file.status === "blocked").length;
+  $("preflight-summary").innerHTML = blocked
+    ? `<span aria-hidden="true">!</span><span>${blocked} file${blocked === 1 ? "" : "s"} must be replaced before reconciliation.</span>`
+    : `<span class="checkmark" aria-hidden="true">✓</span><span>All ${files.length + 1} files passed preflight.</span>`;
+  $("preflight-summary").style.background = blocked ? "var(--critical-soft)" : "var(--accent-soft)";
+
+  const ledger = selectedLedger ? {
+    name: selectedLedger.name, processor: "Internal ledger", format: "csv", batch_id: "—",
+    settlement_date: "—", currencies: report.ledger_file.currencies,
+    lines: report.ledger_file.transactions, status: "ready"
+  } : {
+    name: report.ledger_file.name, processor: "Internal ledger", format: report.ledger_file.format,
+    batch_id: "—", settlement_date: "—", currencies: report.ledger_file.currencies,
+    lines: report.ledger_file.transactions, status: report.ledger_file.status
+  };
+  const rows = [ledger, ...files];
+  $("review-rows").innerHTML = rows.map(file => `<tr>
+    <td class="mono">${escapeHtml(file.name)}</td>
+    <td>${escapeHtml(file.processor)}</td>
+    <td>${escapeHtml(String(file.format || "").toUpperCase())}</td>
+    <td class="mono">${escapeHtml(file.batch_id)}</td>
+    <td>${escapeHtml(file.settlement_date)}</td>
+    <td>${escapeHtml(file.currencies.join(", "))}</td>
+    <td class="num">${escapeHtml(file.lines)}</td>
+    <td><span class="status ${escapeHtml(file.status)}">${escapeHtml(file.status)}</span></td>
+  </tr>`).join("");
+  $("run-reconciliation").disabled = blocked > 0;
+  $("run-reconciliation").textContent = runLabel();
+}
+
+function runLabel() {
+  const batchCount = selectedSettlements?.length || report?.files.length || 0;
+  const transactionCount = report?.summary.ledger_transactions || 0;
+  return `Reconcile ${transactionCount.toLocaleString()} transactions against ${batchCount} settlement batches`;
+}
+
+function renderResults() {
+  const summary = report.summary;
+  const critical = report.by_severity.critical || 0;
+  $("results-lede").textContent = `${summary.discrepancies} discrepancies across ${Object.keys(report.settled_totals).length} currencies. Start with ${critical} critical exceptions.`;
+  $("metric-strip").innerHTML = [
+    [summary.matched, "Reconciled"], [summary.unmatched, "Unmatched"],
+    [summary.discrepancies, "Discrepancies"], [summary.batches_processed, "Batches"]
+  ].map(([value, label]) => `<div class="metric"><span class="metric-value">${escapeHtml(value)}</span><span class="metric-label">${escapeHtml(label)}</span></div>`).join("");
+
+  $("currency-rows").innerHTML = Object.entries(report.settled_totals).map(([currency, totals]) => {
+    const risk = report.exposure_by_currency[currency] || `0 ${currency}`;
+    const negative = /(?:\$| )-/.test(risk) || risk.includes("- ");
+    return `<tr><td>${escapeHtml(currency)}</td><td class="num">${escapeHtml(totals.gross)}</td><td class="num">${escapeHtml(totals.fees)}</td><td class="num">${escapeHtml(totals.net)}</td><td class="num ${negative ? "risk-negative" : "risk-positive"}">${escapeHtml(risk)}</td></tr>`;
+  }).join("");
+
+  $("exception-tab-count").textContent = summary.discrepancies;
+  $("matched-tab-count").textContent = summary.matched;
+  $("batch-tab-count").textContent = summary.batches_processed;
+  renderSeverityFilters();
+  renderTypeBreakdown();
+  renderExceptions();
+  renderMatched();
+  renderBatches();
+}
+
+function renderSeverityFilters() {
+  const levels = ["all", "critical", "high", "medium", "low"];
+  $("severity-filters").innerHTML = levels.map(level => {
+    const count = level === "all" ? report.discrepancies.length : (report.by_severity[level] || 0);
+    return `<button class="filter" type="button" data-severity="${level}" aria-pressed="${level === severityFilter}">${humanize(level)} ${count}</button>`;
+  }).join("");
+  $("severity-filters").querySelectorAll("button").forEach(button => button.addEventListener("click", () => {
+    severityFilter = button.dataset.severity;
+    renderSeverityFilters();
+    renderExceptions();
+  }));
+}
+
+function renderTypeBreakdown() {
+  $("type-summary").textContent = `${report.discrepancies.length} exceptions by type`;
+  $("type-grid").innerHTML = Object.entries(report.by_type).map(([type, count]) => `<span>${escapeHtml(humanize(type))} <strong>${count}</strong></span>`).join("");
+}
+
+function renderExceptions() {
+  const needle = exceptionQuery.trim().toLowerCase();
+  const findings = report.discrepancies.filter(finding =>
+    (severityFilter === "all" || finding.severity === severityFilter) &&
+    (!needle || JSON.stringify(finding).toLowerCase().includes(needle))
+  );
+  $("exception-list").innerHTML = findings.length ? findings.map(finding => {
+    const transaction = finding.transaction_ids.join(", ") || "Batch-level";
+    const source = finding.source_file
+      ? `<span class="mono">${escapeHtml(finding.source_file)}</span> · <code>${escapeHtml(finding.source_locator)}</code>`
+      : "No source row available";
+    return `<details class="exception">
+      <summary>
+        <span class="severity ${escapeHtml(finding.severity)}">${escapeHtml(finding.severity)}</span>
+        <span><span class="exception-title">${escapeHtml(humanize(finding.type))}</span><span class="exception-meta">${escapeHtml(finding.processor)} · ${escapeHtml(transaction)}${finding.batch_id ? ` · ${escapeHtml(finding.batch_id)}` : ""}</span></span>
+        <span class="exception-impact"><strong>${escapeHtml(finding.impact_display || "No direct impact")}</strong><span>${escapeHtml(finding.id)}</span></span>
+      </summary>
+      <div class="exception-body">
+        <p class="finding-description">${escapeHtml(finding.description)}</p>
+        <div class="comparison"><div><span class="detail-label">Expected</span><strong>${escapeHtml(formatDetail(finding.expected))}</strong></div><div><span class="detail-label">Actual</span><strong>${escapeHtml(formatDetail(finding.actual))}</strong></div></div>
+        <div class="recommended"><strong>Recommended action</strong><span>${escapeHtml(finding.recommended_action)}</span></div>
+        <div class="provenance"><span class="detail-label">Source</span>${source}</div>
+      </div>
+    </details>`;
+  }).join("") : `<div class="empty">No exceptions match this filter.</div>`;
+}
+
+function renderMatched() {
+  const needle = matchedQuery.trim().toLowerCase();
+  const rows = report.matched_transactions.filter(row => !needle || JSON.stringify(row).toLowerCase().includes(needle));
+  const visible = rows.slice(0, matchedLimit);
+  $("matched-visible-count").textContent = `Showing ${visible.length} of ${rows.length}`;
+  $("matched-rows").innerHTML = visible.map(row => `<tr title="${escapeHtml(`${row.source_file} · ${row.source_locator}`)}">
+    <td class="mono">${escapeHtml(row.transaction_id)}</td><td>${escapeHtml(row.processor)}</td><td class="mono">${escapeHtml(row.batch_id)}</td><td>${escapeHtml(row.currency)}</td>
+    <td class="num">${escapeHtml(row.internal_amount)}</td><td class="num">${escapeHtml(row.gross)}</td><td class="num">${escapeHtml(row.fees)}</td><td class="num">${escapeHtml(row.net)}</td><td>${escapeHtml(row.settlement_date)}</td>
+  </tr>`).join("");
+  $("load-more-matched").hidden = visible.length >= rows.length;
+}
+
+function renderBatches() {
+  $("batch-rows").innerHTML = report.batches.map(batch => `<tr>
+    <td class="mono">${escapeHtml(batch.batch_id)}</td><td>${escapeHtml(batch.processor)}</td><td>${escapeHtml(batch.settlement_date)}</td><td>${escapeHtml(batch.currency)}</td>
+    <td class="num">${escapeHtml(batch.lines)}</td><td class="num">${escapeHtml(batch.gross)}</td><td class="num">${escapeHtml(batch.fees)}</td><td class="num">${escapeHtml(batch.net)}</td>
+    <td><span class="status ${escapeHtml(batch.status)}">${batch.status === "review" ? `${batch.finding_ids.length} exception${batch.finding_ids.length === 1 ? "" : "s"}` : "Ready"}</span></td>
+  </tr>`).join("");
+}
+
+$("exception-search").addEventListener("input", event => { exceptionQuery = event.target.value; renderExceptions(); });
+$("matched-search").addEventListener("input", event => { matchedQuery = event.target.value; matchedLimit = 50; renderMatched(); });
+$("load-more-matched").addEventListener("click", () => { matchedLimit += 50; renderMatched(); });
+
+document.querySelectorAll("[data-tab]").forEach(button => button.addEventListener("click", () => selectTab(button.dataset.tab)));
+function selectTab(tab) {
+  document.querySelectorAll("[data-tab]").forEach(button => button.setAttribute("aria-selected", String(button.dataset.tab === tab)));
+  document.querySelectorAll(".tab-panel").forEach(panel => { panel.hidden = panel.id !== `panel-${tab}`; });
+  history.replaceState(null, "", `#results-${tab}`);
+}
+
+document.querySelectorAll("[data-export]").forEach(button => button.addEventListener("click", () => exportReport(button.dataset.export)));
+function exportReport(kind) {
+  const files = {
+    exceptions: ["reconciliation-exceptions.csv", "text/csv", exceptionsCsv()],
+    full: ["full-reconciliation.csv", "text/csv", fullCsv()],
+    markdown: ["reconciliation-report.md", "text/markdown", markdownReport()],
+    json: ["reconciliation-report.json", "application/json", JSON.stringify(report, null, 2) + "\n"]
+  };
+  const [name, type, content] = files[kind];
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(new Blob([content], {type}));
+  link.download = name;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  document.querySelector(".export-menu").removeAttribute("open");
+  showToast(`${name} downloaded.`);
+}
+
+function exceptionsCsv() {
+  const header = ["id","severity","type","processor","batch_id","transaction_ids","expected","actual","impact","source_file","source_locator","recommended_action"];
+  const rows = report.discrepancies.map(finding => [finding.id,finding.severity,finding.type,finding.processor,finding.batch_id,finding.transaction_ids.join(" "),formatDetail(finding.expected),formatDetail(finding.actual),finding.impact_display,finding.source_file,finding.source_locator,finding.recommended_action]);
+  return toCsv(header, rows);
+}
+
+function fullCsv() {
+  const header = ["record_type","status","transaction_id","processor","batch_id","currency","internal_amount","gross","fees","net","settlement_date","finding_ids","source_file","source_locator"];
+  const matched = report.matched_transactions.map(row => ["transaction",row.status,row.transaction_id,row.processor,row.batch_id,row.currency,row.internal_amount,row.gross,row.fees,row.net,row.settlement_date,row.finding_ids.join(" "),row.source_file,row.source_locator]);
+  const exceptions = report.discrepancies.map(finding => ["exception",finding.severity,finding.transaction_ids.join(" "),finding.processor,finding.batch_id,finding.impact?.currency || "","","","","",report.as_of,finding.id,finding.source_file,finding.source_locator]);
+  return toCsv(header, [...matched, ...exceptions]);
+}
+
+function markdownReport() {
   const s = report.summary;
-  $("meta").textContent =
-    `As of ${report.as_of} · ${s.batches_processed} payouts · ${s.settlement_lines} settlement lines · generated ${report.generated_at}`;
-
-  $("tiles").innerHTML = [
-    ["Match rate", s.match_rate, false],
-    ["Matched", s.matched, false],
-    ["Unmatched", s.unmatched, s.unmatched > 0],
-    ["Discrepancies", s.discrepancies, s.discrepancies > 0],
-    ["Exposure (indicative)", "~US$" + Number(s.indicative_exposure_usd).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}), true],
-    ["Ledger transactions", s.ledger_transactions, false],
-  ].map(([k, v, alert]) =>
-    `<div class="tile ${alert ? "alert" : ""}"><div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div></div>`
-  ).join("");
-
-  $("exposure").innerHTML = Object.entries(report.exposure_by_currency)
-    .map(([c, v]) => `<tr><td>${escapeHtml(c)}</td><td class="num">${escapeHtml(v)}</td></tr>`).join("");
-
-  $("volume").innerHTML = Object.entries(report.settled_by_processor)
-    .map(([k, t]) => `<tr><td>${escapeHtml(k)}</td><td class="num">${escapeHtml(t.lines)}</td><td class="num">${escapeHtml(t.gross)}</td>
-      <td class="num">${escapeHtml(t.fees)}</td><td class="num">${escapeHtml(t.net)}</td></tr>`).join("");
-
-  const severities = ["all", "critical", "high", "medium", "low"]
-    .filter(level => level === "all" || report.by_severity[level]);
-  $("filters").innerHTML =
-    severities.map(s2 => `<button type="button" data-sev="${s2}" class="${s2 === severityFilter ? "on" : ""}">
-      ${s2}${s2 === "all" ? ` (${report.discrepancies.length})` : ` (${report.by_severity[s2]})`}</button>`).join("")
-    + `<input id="q" aria-label="Filter findings" placeholder="Filter by transaction, type or processor…" value="${escapeHtml(query)}">`;
-
-  $("filters").querySelectorAll("button").forEach(b =>
-    b.onclick = () => { severityFilter = b.dataset.sev; render(); });
-  const q = $("q");
-  q.oninput = e => { query = e.target.value; renderList(); };
-
-  renderList();
+  const totals = Object.entries(report.settled_totals).map(([currency, value]) => `| ${currency} | ${value.gross} | ${value.fees} | ${value.net} | ${report.exposure_by_currency[currency] || "—"} |`).join("\n");
+  const findings = report.discrepancies.map((finding, index) => `${index + 1}. **${humanize(finding.type)}** (${finding.severity}) — ${finding.description}\n   - Action: ${finding.recommended_action}\n   - Source: ${finding.source_file || "—"} ${finding.source_locator || ""}`).join("\n");
+  return `# Settlement reconciliation — ${report.as_of}\n\n${s.matched} reconciled · ${s.unmatched} unmatched · ${s.discrepancies} discrepancies\n\n## Totals by currency\n\n| Currency | Gross | Fees | Net | Money at risk |\n| --- | ---: | ---: | ---: | ---: |\n${totals}\n\n## Exceptions\n\n${findings}\n`;
 }
 
-function renderList() {
-  const needle = query.toLowerCase();
-  const rows = report.discrepancies.filter(d =>
-    (severityFilter === "all" || d.severity === severityFilter) &&
-    (!needle || JSON.stringify(d).toLowerCase().includes(needle)));
-
-  $("worklist").innerHTML = rows.length ? rows.map(d => `
-    <tr>
-      <td><code>${escapeHtml(d.id)}</code></td>
-      <td><span class="pill ${escapeHtml(d.severity)}">${escapeHtml(d.severity)}</span></td>
-      <td><code>${escapeHtml(d.type)}</code></td>
-      <td>${escapeHtml(d.processor)}</td>
-      <td><code>${escapeHtml(d.transaction_ids.join(", ") || "—")}</code></td>
-      <td class="num">${escapeHtml(d.impact_display || "—")}</td>
-      <td>${escapeHtml(d.description)}<div class="action">→ ${escapeHtml(d.recommended_action)}</div></td>
-    </tr>`).join("")
-    : `<tr><td colspan="7" style="color:var(--muted)">No discrepancies match this filter.</td></tr>`;
-
-  $("counts").textContent =
-    `Showing ${rows.length} of ${report.discrepancies.length} findings · ` +
-    Object.entries(report.by_type).map(([k, v]) => `${k}=${v}`).join(" · ");
+function toCsv(header, rows) {
+  return [header, ...rows].map(row => row.map(csvCell).join(",")).join("\n") + "\n";
 }
+function csvCell(value) {
+  const text = String(value ?? "");
+  return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+}
+function formatDetail(value) {
+  if (value === null || value === undefined || value === "") return "—";
+  return typeof value === "object" ? JSON.stringify(value) : String(value);
+}
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+function detectProcessor(name) {
+  const value = name.toLowerCase();
+  if (value.includes("ady")) return "Adyen";
+  if (value.includes("dlo") || value.includes("dlocal")) return "dLocal";
+  if (value.includes("payu")) return "PayU Latam";
+  if (value.includes("stripe") || value.startsWith("po-")) return "Stripe";
+  return "Detecting";
+}
+function showToast(message) {
+  const toast = $("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  window.clearTimeout(showToast.timer);
+  showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 3200);
+}
+
+async function reconcileUploads() {
+  const [ledgerContent, settlementContents] = await Promise.all([
+    selectedLedger.text(),
+    Promise.all(selectedSettlements.map(file => file.text()))
+  ]);
+  const response = await fetch("/api/reconcile", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      as_of: $("as-of").value,
+      ledger: {name: selectedLedger.name, content: ledgerContent},
+      settlements: selectedSettlements.map((file, index) => ({
+        name: file.name,
+        content: settlementContents[index]
+      }))
+    })
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || "The uploaded files could not be reconciled.");
+  return payload;
+}
+
+document.addEventListener("click", event => {
+  const menu = document.querySelector(".export-menu");
+  if (menu?.open && !menu.contains(event.target)) menu.removeAttribute("open");
+});
 </script>
 </body>
 </html>

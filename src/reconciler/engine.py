@@ -65,6 +65,11 @@ class ReconciliationResult:
     totals_by_currency: dict[str, Totals] = field(default_factory=dict)
     totals_by_processor: dict[str, Totals] = field(default_factory=dict)
     matched_ids: set[str] = field(default_factory=set)
+    ledger: dict[str, Transaction] = field(default_factory=dict, repr=False)
+    settlements: dict[str, list[tuple[SettlementBatch, SettlementLine]]] = field(
+        default_factory=dict, repr=False
+    )
+    source_batches: tuple[SettlementBatch, ...] = field(default_factory=tuple, repr=False)
     batches: int = 0
     lines: int = 0
     ledger_size: int = 0
@@ -140,6 +145,8 @@ class ReconciliationEngine:
         self, batches: Sequence[SettlementBatch], as_of: date | None = None
     ) -> ReconciliationResult:
         result = ReconciliationResult(rules=self.rules)
+        result.ledger = dict(self.ledger)
+        result.source_batches = tuple(batches)
         result.ledger_size = len(self.ledger)
         result.awaiting_settlement = sum(1 for t in self.ledger.values() if t.expects_settlement)
         result.as_of = as_of or max((b.settlement_date for b in batches), default=date.today())
@@ -174,6 +181,7 @@ class ReconciliationEngine:
             tid for tid, transaction in self.ledger.items() if transaction.expects_settlement
         }
         result.matched_ids = expected_ids.intersection(settlements)
+        result.settlements = dict(settlements)
         result.discrepancies += run_ledger_detectors(
             LedgerContext(
                 ledger=self.ledger,

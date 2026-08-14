@@ -297,6 +297,53 @@ class EndToEndTests(unittest.TestCase):
             with self.subTest(fmt=fmt):
                 self.assertTrue(len(reporting.render(result, fmt)) > 200)
 
+    def test_dashboard_report_includes_investigation_details(self):
+        from reconciler import reporting
+
+        dataset = datagen.generate(count=120, as_of=AS_OF)
+        result = ReconciliationEngine(
+            dataset.transactions, PROFILES, DEFAULT_RULES
+        ).reconcile(dataset.batches, as_of=AS_OF)
+        report = reporting.to_dict(result)
+
+        self.assertEqual(len(report["files"]), result.batches)
+        self.assertEqual(len(report["batches"]), result.batches)
+        self.assertEqual(len(report["matched_transactions"]), len(result.matched_ids))
+        self.assertTrue(
+            {
+                "transaction_id", "internal_amount", "gross",
+                "fees", "net", "source_locator",
+            }
+            <= report["matched_transactions"][0].keys()
+        )
+        sourced_findings = [
+            finding for finding in report["discrepancies"] if finding["source_file"]
+        ]
+        self.assertTrue(sourced_findings)
+        self.assertTrue(all(finding["source_locator"] for finding in sourced_findings))
+
+    def test_browser_upload_endpoint_runs_the_real_engine(self):
+        from api.reconcile import reconcile_payload
+
+        root = Path(__file__).resolve().parents[1] / "data"
+        payload = {
+            "as_of": AS_OF.isoformat(),
+            "ledger": {
+                "name": "transactions.csv",
+                "content": (root / "transactions.csv").read_text(encoding="utf-8"),
+            },
+            "settlements": [
+                {"name": path.name, "content": path.read_text(encoding="utf-8")}
+                for path in sorted((root / "settlements").iterdir())
+            ],
+        }
+
+        report = reconcile_payload(payload)
+
+        self.assertEqual(report["summary"]["ledger_transactions"], 340)
+        self.assertEqual(report["summary"]["batches_processed"], 9)
+        self.assertEqual(report["summary"]["discrepancies"], 26)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -27,7 +27,7 @@ result against known ground truth. It takes about a second and needs nothing
 installed.
 
 ```bash
-make test          # 27 tests, standard library unittest
+make test          # 29 tests, standard library unittest
 make processors    # registered processors, currencies, rate cards, detectors
 make report        # write the Markdown report to out/
 ```
@@ -277,8 +277,11 @@ All four in the brief are implemented:
   units* so it adapts to each currency automatically, plus a relative fee
   allowance and a materiality threshold. `--strict` switches to a zero-tolerance
   audit profile.
-- **Dashboard** — the deployed page, plus `make processors` for a CLI view of
-  the whole registry.
+- **Interactive workflow** — the deployed page walks through file selection,
+  preflight, reconciliation, exceptions, matched transactions, and batches.
+  Every exception expands to its expected/actual values, recommended action,
+  and exact source row or JSON/XML path. CSV, Markdown, and JSON exports are
+  generated in the browser from the same report payload.
 
 Beyond the brief: stable finding IDs for cross-run tracking, a
 `--fail-on-discrepancy` exit code for scheduled CI runs, four output formats,
@@ -289,7 +292,7 @@ and the ground-truth verification harness.
 ## Testing
 
 ```bash
-make test     # 27 tests
+make test     # 29 tests
 ```
 
 Three layers, matching the three things that can be wrong:
@@ -318,7 +321,7 @@ files and rules, no implicit currency conversion, and an exception worklist for
 finance rather than a generic engineering dashboard.
 
 Generated code was not treated as evidence that the engine worked. I verified
-it with 27 unit and integration tests, deterministic ground truth that measures
+it with 29 unit and integration tests, deterministic ground truth that measures
 15/15 injected defects, a fresh-clone run of the documented command, and checks
 against the deployed report. I also changed the initial approach after review:
 fictional processors became public-doc-informed adapters, three currencies
@@ -356,7 +359,6 @@ With more than two hours, in priority order:
 ## Notes on scope
 
 The brief asked for 300+ transactions and 5 settlement files; this generates
-340 across 9 files, 4 processors, 3 formats and 4 currencies. Perfect UI polish
-was explicitly not expected, so the dashboard is deliberately plain — the
-effort went into the reconciliation logic, the extensibility of the processor
-and currency registries, and proving correctness against ground truth.
+340 across 9 files, 4 processors, 3 formats and 4 currencies. The web workflow
+uses the committed deterministic run so a reviewer can inspect the same result
+the CLI verifies, while keeping the core engine independent of any web runtime.

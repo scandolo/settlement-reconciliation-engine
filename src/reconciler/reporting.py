@@ -21,7 +21,8 @@ import json
 from datetime import datetime, timezone
 
 from .engine import ReconciliationResult
-from .models import Severity
+from .models import Discrepancy, SettlementBatch, SettlementLine, Severity
+from .money import total
 
 SEVERITY_ICON = {
     Severity.CRITICAL: "!!",
@@ -33,6 +34,11 @@ SEVERITY_ICON = {
 
 def to_dict(result: ReconciliationResult) -> dict:
     """The single source of truth every renderer reads from."""
+    matched = [
+        _matched_to_json(result, transaction_id)
+        for transaction_id in sorted(result.matched_ids)
+    ]
+    batches = [_batch_to_json(result, batch) for batch in result.source_batches]
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "as_of": result.as_of.isoformat() if result.as_of else None,
@@ -54,8 +60,165 @@ def to_dict(result: ReconciliationResult) -> dict:
         "exposure_by_currency": {k: str(v) for k, v in result.exposure().items()},
         "by_severity": result.counts("severity"),
         "by_type": result.counts("type"),
-        "discrepancies": [d.to_json() for d in result.worklist()],
+        "ledger_file": {
+            "name": "transactions.csv",
+            "format": "csv",
+            "transactions": result.ledger_size,
+            "currencies": sorted(
+                {transaction.currency for transaction in result.ledger.values()}
+            ),
+            "status": "ready",
+            "warnings": [],
+        },
+        "files": [
+            {
+                "name": batch.source_file,
+                "processor": batch.processor,
+                "format": batch.source_format,
+                "batch_id": batch.batch_id,
+                "settlement_date": batch.settlement_date.isoformat(),
+                "currencies": [batch.currency],
+                "lines": len(batch.lines),
+                "status": "ready",
+                "warnings": [],
+            }
+            for batch in result.source_batches
+        ],
+        "batches": batches,
+        "matched_transactions": matched,
+        "discrepancies": [
+            _discrepancy_to_json(result, finding) for finding in result.worklist()
+        ],
     }
+
+
+def _matched_to_json(result: ReconciliationResult, transaction_id: str) -> dict:
+    """One inspectable matched transaction, including its exact source location."""
+    transaction = result.ledger[transaction_id]
+    batch, line = result.settlements[transaction_id][0]
+    source = _line_source(batch, line)
+    finding_ids = [
+        finding.id for finding in result.discrepancies
+        if transaction_id in finding.transaction_ids
+    ]
+    return {
+        "transaction_id": transaction_id,
+        "processor": batch.processor,
+        "batch_id": batch.batch_id,
+        "currency": line.currency,
+        "internal_amount": str(transaction.amount),
+        "gross": str(line.gross),
+        "fees": str(line.fee),
+        "net": str(line.net),
+        "settlement_date": batch.settlement_date.isoformat(),
+        "source_file": source["source_file"],
+        "source_format": source["source_format"],
+        "source_locator": source["source_locator"],
+        "settlement_count": len(result.settlements[transaction_id]),
+        "status": "review" if finding_ids else "matched",
+        "finding_ids": finding_ids,
+    }
+
+
+def _batch_to_json(result: ReconciliationResult, batch: SettlementBatch) -> dict:
+    currencies = sorted({line.currency for line in batch.lines})
+    finding_ids = [
+        finding.id for finding in result.discrepancies if finding.batch_id == batch.batch_id
+    ]
+    return {
+        "batch_id": batch.batch_id,
+        "processor": batch.processor,
+        "settlement_date": batch.settlement_date.isoformat(),
+        "currency": " + ".join(currencies),
+        "currencies": currencies,
+        "lines": len(batch.lines),
+        "gross": _multi_currency_total(batch.lines, "gross"),
+        "fees": _multi_currency_total(batch.lines, "fee"),
+        "net": _multi_currency_total(batch.lines, "net"),
+        "reported_gross": str(batch.reported_gross) if batch.reported_gross else None,
+        "reported_fees": str(batch.reported_fees) if batch.reported_fees else None,
+        "reported_net": str(batch.reported_net) if batch.reported_net else None,
+        "source_file": batch.source_file,
+        "source_format": batch.source_format,
+        "status": "review" if finding_ids else "ready",
+        "finding_ids": finding_ids,
+    }
+
+
+def _discrepancy_to_json(result: ReconciliationResult, finding: Discrepancy) -> dict:
+    payload = finding.to_json()
+    payload.update(_finding_source(result, finding))
+    return payload
+
+
+def _finding_source(result: ReconciliationResult, finding: Discrepancy) -> dict:
+    if finding.batch_id:
+        batch = next(
+            (
+                candidate for candidate in result.source_batches
+                if candidate.batch_id == finding.batch_id
+            ),
+            None,
+        )
+        if batch is not None:
+            transaction_id = finding.transaction_ids[0] if finding.transaction_ids else None
+            line = next(
+                (candidate for candidate in batch.lines if candidate.transaction_id == transaction_id),
+                None,
+            )
+            if line is not None:
+                return _line_source(batch, line)
+            return {
+                "source_file": batch.source_file,
+                "source_format": batch.source_format,
+                "source_locator": "Batch header",
+            }
+
+    transaction_id = finding.transaction_ids[0] if finding.transaction_ids else None
+    if transaction_id in result.ledger:
+        ledger_row = list(result.ledger).index(transaction_id) + 2
+        return {
+            "source_file": "transactions.csv",
+            "source_format": "csv",
+            "source_locator": f"Row {ledger_row}",
+        }
+    return {"source_file": None, "source_format": None, "source_locator": None}
+
+
+def _line_source(batch: SettlementBatch, line: SettlementLine) -> dict:
+    index = next(
+        position
+        for position, candidate in enumerate(batch.lines)
+        if candidate is line or candidate.transaction_id == line.transaction_id
+    )
+    if batch.source_format == "json":
+        locator = f"$.settlement.payments[{index}]"
+    elif batch.source_format == "xml":
+        locator = f"/ReconciliationReport/Transactions/Transaction[{index + 1}]"
+    else:
+        locator = f"Row {index + 2}"
+    return {
+        "source_file": batch.source_file,
+        "source_format": batch.source_format,
+        "source_locator": locator,
+    }
+
+
+def _multi_currency_total(lines: tuple[SettlementLine, ...], attribute: str) -> str:
+    currencies = sorted({getattr(line, attribute).currency for line in lines})
+    amounts = [
+        str(
+            total(
+                (
+                    getattr(line, attribute) for line in lines
+                    if getattr(line, attribute).currency == code
+                ),
+                code,
+            )
+        )
+        for code in currencies
+    ]
+    return " + ".join(amounts)
 
 
 def to_json(result: ReconciliationResult) -> str:
